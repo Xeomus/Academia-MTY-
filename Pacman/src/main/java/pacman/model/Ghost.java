@@ -12,6 +12,7 @@ import pacman.strategy.MovementStrategy;
 * */
 public class Ghost extends Entity implements Movable, Collidable {
 
+    private final GhostType type;
     private static final int SPEED = 8;
 
     private Direction direction;
@@ -20,12 +21,17 @@ public class Ghost extends Entity implements Movable, Collidable {
     private final int width;
     private final int height;
 
-    public Ghost(Position position, int width, int height, MovementStrategy movementStrategy){
+    public Ghost(Position position, int width, int height, GhostType type ,MovementStrategy movementStrategy){
         super(position);
         this.width = width;
         this.height = height;
+        this.type = type;
         this.movementStrategy = movementStrategy;
         this.direction = Direction.UP;
+    }
+
+    public GhostType getType() {
+        return type;
     }
 
     public Direction getDirection() {
@@ -44,9 +50,11 @@ public class Ghost extends Entity implements Movable, Collidable {
         this.movementStrategy = movementStrategy;
     }
 
-    public void updateDirection() {
-        direction = movementStrategy.chooseDirection(this);
-
+    public void updateDirection(Position target) {
+        direction = movementStrategy.chooseDirection(
+                this,
+                target
+        );
     }
     public Position getNextPosition() {
         Position currentPosition = getPosition();

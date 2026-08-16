@@ -1,9 +1,7 @@
 package pacman.game;
 
-import pacman.model.Food;
-import pacman.model.Ghost;
-import pacman.model.Position;
-import pacman.model.Wall;
+import pacman.model.*;
+import pacman.strategy.ChaseMovementStrategy;
 import pacman.strategy.RandomMovementStrategy;
 
 import java.util.ArrayList;
@@ -89,15 +87,48 @@ public class Board {
                         break;
 
                     case 'r':
-                    case 'p':
-                    case 'b':
-                    case 'o':
-
                         ghosts.add(
                                 new Ghost(
                                         new Position(x, y),
                                         TILE_SIZE,
                                         TILE_SIZE,
+                                        GhostType.BLINKY,
+                                        new ChaseMovementStrategy()
+                                )
+                        );
+                        break;
+
+                    case 'p':
+                        ghosts.add(
+                                new Ghost(
+                                        new Position(x, y),
+                                        TILE_SIZE,
+                                        TILE_SIZE,
+                                        GhostType.PINKY,
+                                        new RandomMovementStrategy()
+                                )
+                        );
+                        break;
+
+                    case 'b':
+                        ghosts.add(
+                                new Ghost(
+                                        new Position(x, y),
+                                        TILE_SIZE,
+                                        TILE_SIZE,
+                                        GhostType.INKY,
+                                        new RandomMovementStrategy()
+                                )
+                        );
+                        break;
+
+                    case 'o':
+                        ghosts.add(
+                                new Ghost(
+                                        new Position(x, y),
+                                        TILE_SIZE,
+                                        TILE_SIZE,
+                                        GhostType.CLYDE,
                                         new RandomMovementStrategy()
                                 )
                         );

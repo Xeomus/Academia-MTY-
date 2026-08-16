@@ -44,7 +44,10 @@ public class GamePanel extends JPanel implements KeyListener, ActionListener {
     private final Image pacmanLeftImage;
     private final Image pacmanRightImage;
 
-    private final Image ghostImage;
+    private final Image blinkyImage;
+    private final Image pinkyImage;
+    private final Image inkyImage;
+    private final Image clydeImage;
 
     public GamePanel() {
         setPreferredSize(new Dimension(BOARD_WIDTH, BOARD_HEIGHT));
@@ -65,7 +68,11 @@ public class GamePanel extends JPanel implements KeyListener, ActionListener {
         pacmanDownImage = loadImage("/pacmanDown.png");
         pacmanLeftImage = loadImage("/pacmanLeft.png");
         pacmanRightImage = loadImage("/pacmanRight.png");
-        ghostImage = loadImage("/redGhost.png");
+
+        blinkyImage = loadImage("/redGhost.png");
+        pinkyImage = loadImage("/pinkGhost.png");
+        inkyImage = loadImage("/blueGhost.png");
+        clydeImage = loadImage("/orangeGhost.png");
 
         gameloop = new Timer(500, this);
         gameloop.start();
@@ -74,6 +81,30 @@ public class GamePanel extends JPanel implements KeyListener, ActionListener {
 
     private Image loadImage(String path) {
         return new ImageIcon(GamePanel.class.getResource(path)).getImage();
+    }
+
+    private Image getGhostImage(Ghost ghost) {
+
+        switch (ghost.getType()) {
+
+            case BLINKY:
+                return blinkyImage;
+
+            case PINKY:
+                return pinkyImage;
+
+            case INKY:
+                return inkyImage;
+
+            case CLYDE:
+                return clydeImage;
+
+            default:
+                throw new IllegalStateException(
+                        "Unknown ghost type: "
+                                + ghost.getType()
+                );
+        }
     }
 
     @Override
@@ -128,9 +159,10 @@ public class GamePanel extends JPanel implements KeyListener, ActionListener {
         for (Ghost ghost : board.getGhosts()) {
 
             Position position = ghost.getPosition();
+            Image image = getGhostImage(ghost);
 
             g.drawImage(
-                    ghostImage,
+                    image,
                     position.getX(),
                     position.getY(),
                     ghost.getWidth(),
@@ -227,7 +259,9 @@ public class GamePanel extends JPanel implements KeyListener, ActionListener {
             if (collision) {
 
                 ghost.moveTo(currentPosition);
-                ghost.updateDirection();
+                ghost.updateDirection(
+                        pacman.getPosition()
+                );
             }
         }
     }
