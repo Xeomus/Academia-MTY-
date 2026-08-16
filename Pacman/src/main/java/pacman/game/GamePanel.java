@@ -21,13 +21,13 @@ public class GamePanel extends JPanel implements KeyListener, ActionListener {
     private static final int TILE_SIZE= 32;
     private static final int FOOD_SIZE = 4;
 
-    private final GameState gameState;
-
     private static final int BOARD_WIDTH = COLS * TILE_SIZE;
     private static final int BOARD_HEIGHT = ROWS * TILE_SIZE;
     private final Timer gameLoop;
     private final Board board;
     private final Image wallImage;
+    private final GameState gameState;
+    private final Leaderboard leaderboard;
     /*
     * building two objects by composition
     * because gamePanel isn't a Pacman
@@ -56,6 +56,7 @@ public class GamePanel extends JPanel implements KeyListener, ActionListener {
         addKeyListener(this);
 
         gameState = new GameState();
+        leaderboard = new Leaderboard();
         pacman = new Pacman(
                 new Position(9 * TILE_SIZE, 15 * TILE_SIZE),
                 TILE_SIZE,
@@ -331,6 +332,12 @@ public class GamePanel extends JPanel implements KeyListener, ActionListener {
                 gameState.loseLife();
 
                 if (gameState.isGameOver()) {
+                    leaderboard.addPlayer(
+                            new Player(
+                                    "Player",
+                                    gameState.getScore()
+                            )
+                    );
                     gameLoop.stop();
                     return;
                 }
