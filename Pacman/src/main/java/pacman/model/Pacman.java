@@ -8,6 +8,7 @@ package pacman.model;
 public class Pacman extends Entity{
 
     private Direction direction;
+    private static final int SPEED = 8;
     /*
     * Call to parent constructor (super)
     * */
@@ -37,16 +38,16 @@ public class Pacman extends Entity{
 
         switch (direction){
             case UP:
-                y--;
+                y-=SPEED;
                 break;
             case DOWN:
-                y++;
+                y+=SPEED;
                 break;
             case LEFT:
-                x--;
+                x-=SPEED;
                 break;
             case RIGHT:
-                x++;
+                x+=SPEED;
                 break;
         }
         setPosition(new Position(x,y));
