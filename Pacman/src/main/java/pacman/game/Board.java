@@ -3,6 +3,7 @@ package pacman.game;
 import pacman.model.*;
 import pacman.strategy.ChaseMovementStrategy;
 import pacman.strategy.RandomMovementStrategy;
+import pacman.exception.InvalidMapException;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -46,6 +47,7 @@ public class Board {
     };
 
     public Board() {
+        validateMap();
         loadMap();
     }
 
@@ -163,5 +165,71 @@ public class Board {
 
     public List<Wall> getWalls(){
         return Collections.unmodifiableList(walls);
+    }
+
+    private boolean isValidTile(char tile) {
+
+        return tile == 'X'
+                || tile == 'O'
+                || tile == ' '
+                || tile == 'P'
+                || tile == 'r'
+                || tile == 'p'
+                || tile == 'b'
+                || tile == 'o';
+    }
+
+    private void validateMap() {
+
+        if (tileMap.length == 0) {
+            throw new InvalidMapException(
+                    "Tile map cannot be empty"
+            );
+        }
+
+        int expectedColumns = tileMap[0].length();
+        int pacmanCount = 0;
+
+        for (int row = 0; row < tileMap.length; row++) {
+
+            String currentRow = tileMap[row];
+
+            if (currentRow.length() != expectedColumns) {
+
+                throw new InvalidMapException(
+                        "Invalid row length at row " + row
+                );
+            }
+
+            for (int column = 0;
+                 column < currentRow.length();
+                 column++) {
+
+                char tile = currentRow.charAt(column);
+
+                if (!isValidTile(tile)) {
+
+                    throw new InvalidMapException(
+                            "Invalid tile '"
+                                    + tile
+                                    + "' at row "
+                                    + row
+                                    + ", column "
+                                    + column
+                    );
+                }
+
+                if (tile == 'P') {
+                    pacmanCount++;
+                }
+            }
+        }
+
+        if (pacmanCount != 1) {
+
+            throw new InvalidMapException(
+                    "Tile map must contain exactly one Pacman spawn"
+            );
+        }
     }
 }
