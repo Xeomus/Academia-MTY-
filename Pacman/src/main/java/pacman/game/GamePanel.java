@@ -44,6 +44,8 @@ public class GamePanel extends JPanel implements KeyListener, ActionListener {
     private final Image pacmanLeftImage;
     private final Image pacmanRightImage;
 
+    private final Image ghostImage;
+
     public GamePanel() {
         setPreferredSize(new Dimension(BOARD_WIDTH, BOARD_HEIGHT));
         setBackground(Color.BLACK);
@@ -63,6 +65,7 @@ public class GamePanel extends JPanel implements KeyListener, ActionListener {
         pacmanDownImage = loadImage("/pacmanDown.png");
         pacmanLeftImage = loadImage("/pacmanLeft.png");
         pacmanRightImage = loadImage("/pacmanRight.png");
+        ghostImage = loadImage("/redGhost.png");
 
         gameloop = new Timer(500, this);
         gameloop.start();
@@ -78,6 +81,7 @@ public class GamePanel extends JPanel implements KeyListener, ActionListener {
         super.paintComponent(g);
         drawWalls(g);
         drawFood(g);
+        drawGhosts(g);
         drawPacman(g);
         drawScore(g);
     }
@@ -116,6 +120,23 @@ public class GamePanel extends JPanel implements KeyListener, ActionListener {
             Position position = wall.getPosition();
 
             g.drawImage(wallImage, position.getX(), position.getY(), TILE_SIZE, TILE_SIZE, null);
+        }
+    }
+
+    private void drawGhosts(Graphics g) {
+
+        for (Ghost ghost : board.getGhosts()) {
+
+            Position position = ghost.getPosition();
+
+            g.drawImage(
+                    ghostImage,
+                    position.getX(),
+                    position.getY(),
+                    ghost.getWidth(),
+                    ghost.getHeight(),
+                    null
+            );
         }
     }
 
@@ -183,6 +204,34 @@ public class GamePanel extends JPanel implements KeyListener, ActionListener {
         }
     }
 
+    private void updateGhosts() {
+
+        for (Ghost ghost : board.getGhosts()) {
+
+            Position currentPosition = ghost.getPosition();
+            Position nextPosition = ghost.getNextPosition();
+
+            ghost.moveTo(nextPosition);
+
+            boolean collision = false;
+
+            for (Wall wall : board.getWalls()) {
+
+                if (CollisionDetector.isColliding(ghost, wall)) {
+
+                    collision = true;
+                    break;
+                }
+            }
+
+            if (collision) {
+
+                ghost.moveTo(currentPosition);
+                ghost.updateDirection();
+            }
+        }
+    }
+
     private void checkFoodCollision() {
 
         Food eatenFood = null;
@@ -219,6 +268,7 @@ public class GamePanel extends JPanel implements KeyListener, ActionListener {
     @Override
     public void actionPerformed(ActionEvent e) {
         updatePacman();
+        updateGhosts();
         checkFoodCollision();
         repaint();
     }
