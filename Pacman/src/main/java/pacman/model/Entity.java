@@ -33,11 +33,5 @@ public abstract class Entity {
     protected void setPosition(Position position) {
         this.position = position;
     }
-
-    /*
-    * Each Entity should move, but Entity doesn't
-    * know how each Entity moves
-    * */
-    public abstract void move();
 }
 

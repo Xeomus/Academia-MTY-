@@ -60,7 +60,9 @@ public class Board {
 
                     walls.add(
                             new Wall(
-                                    new Position(x, y)
+                                    new Position(x, y),
+                                    TILE_SIZE,
+                                    TILE_SIZE
                             )
                     );
                 }
