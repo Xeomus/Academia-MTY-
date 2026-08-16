@@ -28,6 +28,7 @@ public class GamePanel extends JPanel implements KeyListener, ActionListener {
     private final Image wallImage;
     private final GameState gameState;
     private final Leaderboard leaderboard;
+    private boolean scoreRegistered;
     /*
     * building two objects by composition
     * because gamePanel isn't a Pacman
@@ -57,6 +58,7 @@ public class GamePanel extends JPanel implements KeyListener, ActionListener {
 
         gameState = new GameState();
         leaderboard = new Leaderboard();
+        scoreRegistered = false;
         pacman = new Pacman(
                 new Position(9 * TILE_SIZE, 15 * TILE_SIZE),
                 TILE_SIZE,
@@ -83,6 +85,31 @@ public class GamePanel extends JPanel implements KeyListener, ActionListener {
 
     private Image loadImage(String path) {
         return new ImageIcon(GamePanel.class.getResource(path)).getImage();
+    }
+
+    private void registerScore() {
+
+        if (scoreRegistered) {
+            return;
+        }
+
+        String name = JOptionPane.showInputDialog(
+                this,
+                "Enter your name:"
+        );
+
+        if (name == null || name.isBlank()) {
+            name = "Player";
+        }
+
+        Player player = new Player(
+                name,
+                gameState.getScore()
+        );
+
+        leaderboard.addPlayer(player);
+
+        scoreRegistered = true;
     }
 
     private Image getGhostImage(Ghost ghost) {
@@ -117,6 +144,46 @@ public class GamePanel extends JPanel implements KeyListener, ActionListener {
         drawGhosts(g);
         drawPacman(g);
         drawHud(g);
+        drawLeaderboard(g);
+    }
+
+    private void drawLeaderboard(Graphics g) {
+
+        if (!gameState.isGameOver()) {
+            return;
+        }
+
+        var players = leaderboard.getPlayersByScore();
+
+        int y = TILE_SIZE * 2;
+
+        g.drawString(
+                "Leaderboard",
+                TILE_SIZE / 2,
+                y
+        );
+
+        int limit = Math.min(
+                players.size(),
+                3
+        );
+
+        for (int i = 0; i < limit; i++) {
+
+            Player player = players.get(i);
+
+            y += 25;
+
+            g.drawString(
+                    (i + 1)
+                            + ". "
+                            + player.getName()
+                            + " - "
+                            + player.getScore(),
+                    TILE_SIZE / 2,
+                    y
+            );
+        }
     }
 
     private void drawFood(Graphics g) {
@@ -256,6 +323,7 @@ public class GamePanel extends JPanel implements KeyListener, ActionListener {
 
     private void restartGame() {
 
+        scoreRegistered = false;
         gameState.reset();
         resetPositions();
         gameLoop.start();
@@ -332,12 +400,7 @@ public class GamePanel extends JPanel implements KeyListener, ActionListener {
                 gameState.loseLife();
 
                 if (gameState.isGameOver()) {
-                    leaderboard.addPlayer(
-                            new Player(
-                                    "Player",
-                                    gameState.getScore()
-                            )
-                    );
+                    registerScore();
                     gameLoop.stop();
                     return;
                 }

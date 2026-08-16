@@ -2,10 +2,7 @@ package pacman.game;
 
 import pacman.model.Player;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 public class Leaderboard {
 
@@ -13,6 +10,31 @@ public class Leaderboard {
 
     public void addPlayer(Player player) {
         players.add(player);
+    }
+
+    public List<Player> getPlayersByScore() {
+
+        List<Player> sortedPlayers =
+                new ArrayList<>(players);
+
+        sortedPlayers.sort(
+                //anonymus class
+                new Comparator<Player>() {
+
+                    @Override
+                    public int compare(
+                            Player first,
+                            Player second
+                    ) {
+                        return Integer.compare(
+                                second.getScore(),
+                                first.getScore()
+                        );
+                    }
+                }
+        );
+
+        return sortedPlayers;
     }
 
     //lambda
