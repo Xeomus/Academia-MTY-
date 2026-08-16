@@ -3,6 +3,7 @@ package pacman.game;
 import pacman.model.Direction;
 import pacman.model.Position;
 import pacman.model.Pacman;
+import pacman.model.Wall;
 
 import javax.swing.*;
 import java.awt.*;
@@ -13,7 +14,9 @@ import java.awt.event.KeyListener;
 
 /*
 * gamePanel IS-A JPanel
-* gamePanel HAS-a KeyListener
+* gamePanel HAS-A KeyListener
+* gamePanel HAS-A Board
+* gamePanel HAS-A Pacman
 * */
 public class GamePanel extends JPanel implements KeyListener, ActionListener {
     private static final int ROWS = 21;
@@ -23,7 +26,8 @@ public class GamePanel extends JPanel implements KeyListener, ActionListener {
     private static final int BOARD_WIDTH = COLS * TILE_SIZE;
     private static final int BOARD_HEIGHT = ROWS * TILE_SIZE;
     private final Timer gameloop;
-
+    private final Board board;
+    private final Image wallImage;
     /*
     * building two objects by composition
     * because gamePanel isn't a Pacman
@@ -50,6 +54,9 @@ public class GamePanel extends JPanel implements KeyListener, ActionListener {
                 new Position(9 * TILE_SIZE, 15 * TILE_SIZE)
         );
 
+        board = new Board();
+
+        wallImage = loadImage("/wall.png");
         pacmanUpImage = loadImage("/pacmanUp.png");
         pacmanDownImage = loadImage("/pacmanDown.png");
         pacmanLeftImage = loadImage("/pacmanLeft.png");
@@ -67,7 +74,16 @@ public class GamePanel extends JPanel implements KeyListener, ActionListener {
     @Override
     protected void paintComponent(Graphics g){
         super.paintComponent(g);
+        drawWalls(g);
         drawPacman(g);
+    }
+
+    private void drawWalls(Graphics g){
+        for (Wall wall: board.getWalls()) {
+            Position position = wall.getPosition();
+
+            g.drawImage(wallImage, position.getX(), position.getY(), TILE_SIZE, TILE_SIZE, null);
+        }
     }
 
     private void drawPacman(Graphics g){

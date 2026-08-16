@@ -4,6 +4,7 @@ package pacman.model;
     *
     * Pacman IS-A Entity
     * Ghost IS-A Entity
+    * Wall IS-A Entity
     * */
 
     //not use Entity extends a Position because Entity isn't a Position
