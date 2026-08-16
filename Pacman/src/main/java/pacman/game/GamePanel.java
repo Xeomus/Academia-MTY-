@@ -51,7 +51,9 @@ public class GamePanel extends JPanel implements KeyListener, ActionListener {
         addKeyListener(this);
 
         pacman = new Pacman(
-                new Position(9 * TILE_SIZE, 15 * TILE_SIZE)
+                new Position(9 * TILE_SIZE, 15 * TILE_SIZE),
+                TILE_SIZE,
+                TILE_SIZE
         );
 
         board = new Board();
@@ -134,6 +136,22 @@ public class GamePanel extends JPanel implements KeyListener, ActionListener {
         }
     }
 
+    private void updatePacman() {
+
+        Position currentPosition = pacman.getPosition();
+        Position nextPosition = pacman.getNextPosition();
+
+        pacman.moveTo(nextPosition);
+
+        for (Wall wall : board.getWalls()) {
+
+            if (CollisionDetector.isColliding(pacman, wall)) {
+                pacman.moveTo(currentPosition);
+                return;
+            }
+        }
+    }
+
     @Override
     public void keyReleased(KeyEvent e) {
 
@@ -141,7 +159,7 @@ public class GamePanel extends JPanel implements KeyListener, ActionListener {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        pacman.move();
+        updatePacman();
         repaint();
     }
 }
