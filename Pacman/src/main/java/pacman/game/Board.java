@@ -1,8 +1,10 @@
 package pacman.game;
 
 import pacman.model.Food;
+import pacman.model.Ghost;
 import pacman.model.Position;
 import pacman.model.Wall;
+import pacman.strategy.RandomMovementStrategy;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -10,6 +12,8 @@ import java.util.List;
 
 /*
 * HAS-A List<Wall>
+* HAS-A List<Food>
+* HAS-A List<Ghost>
 * */
 public class Board {
 
@@ -17,6 +21,7 @@ public class Board {
     private final List<Wall> walls = new ArrayList<>();
     private static final int FOOD_POINTS = 10;
     private final List<Food> foods = new ArrayList<>();
+    private final List<Ghost> ghosts = new ArrayList<>();
 
     private final String[] tileMap = {
             "XXXXXXXXXXXXXXXXXXX",
@@ -83,11 +88,30 @@ public class Board {
                         );
                         break;
 
+                    case 'r':
+                    case 'p':
+                    case 'b':
+                    case 'o':
+
+                        ghosts.add(
+                                new Ghost(
+                                        new Position(x, y),
+                                        TILE_SIZE,
+                                        TILE_SIZE,
+                                        new RandomMovementStrategy()
+                                )
+                        );
+                        break;
+
                     default:
                         break;
                 }
             }
         }
+    }
+
+    public List<Ghost> getGhosts() {
+        return Collections.unmodifiableList(ghosts);
     }
 
     public List<Food> getFoods() {
