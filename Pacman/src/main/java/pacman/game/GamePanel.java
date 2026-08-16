@@ -1,5 +1,6 @@
 package pacman.game;
 
+import pacman.exception.ResourceLoadException;
 import pacman.model.*;
 
 import javax.swing.*;
@@ -8,6 +9,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.net.URL;
 
 /*
 * gamePanel IS-A JPanel
@@ -84,7 +86,18 @@ public class GamePanel extends JPanel implements KeyListener, ActionListener {
     }
 
     private Image loadImage(String path) {
-        return new ImageIcon(GamePanel.class.getResource(path)).getImage();
+
+        URL resource =
+                GamePanel.class.getResource(path);
+
+        if (resource == null) {
+
+            throw new ResourceLoadException(
+                    "Image resource not found: " + path
+            );
+        }
+
+        return new ImageIcon(resource).getImage();
     }
 
     private void registerScore() {
