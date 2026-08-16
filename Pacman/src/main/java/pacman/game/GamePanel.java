@@ -1,9 +1,6 @@
 package pacman.game;
 
-import pacman.model.Direction;
-import pacman.model.Position;
-import pacman.model.Pacman;
-import pacman.model.Wall;
+import pacman.model.*;
 
 import javax.swing.*;
 import java.awt.*;
@@ -22,6 +19,9 @@ public class GamePanel extends JPanel implements KeyListener, ActionListener {
     private static final int ROWS = 21;
     private static final int COLS = 19;
     private static final int TILE_SIZE= 32;
+    private static final int FOOD_SIZE = 4;
+
+    private int score = 0;
 
     private static final int BOARD_WIDTH = COLS * TILE_SIZE;
     private static final int BOARD_HEIGHT = ROWS * TILE_SIZE;
@@ -77,7 +77,38 @@ public class GamePanel extends JPanel implements KeyListener, ActionListener {
     protected void paintComponent(Graphics g){
         super.paintComponent(g);
         drawWalls(g);
+        drawFood(g);
         drawPacman(g);
+        drawScore(g);
+    }
+
+    private void drawFood(Graphics g) {
+
+        g.setColor(Color.WHITE);
+
+        for (Food food : board.getFoods()) {
+
+            Position position = food.getPosition();
+
+            g.fillOval(
+                    position.getX() - FOOD_SIZE / 2,
+                    position.getY() - FOOD_SIZE / 2,
+                    FOOD_SIZE,
+                    FOOD_SIZE
+            );
+        }
+    }
+
+    private void drawScore(Graphics g) {
+
+        g.setColor(Color.WHITE);
+        g.setFont(new Font("Arial", Font.BOLD, 20));
+
+        g.drawString(
+                "Score: " + score,
+                TILE_SIZE / 2,
+                TILE_SIZE / 2
+        );
     }
 
     private void drawWalls(Graphics g){
@@ -152,6 +183,34 @@ public class GamePanel extends JPanel implements KeyListener, ActionListener {
         }
     }
 
+    private void checkFoodCollision() {
+
+        Food eatenFood = null;
+
+        Position pacmanPosition = pacman.getPosition();
+
+        for (Food food : board.getFoods()) {
+
+            Position foodPosition = food.getPosition();
+
+            boolean isInsidePacman =
+                    foodPosition.getX() >= pacmanPosition.getX()
+                            && foodPosition.getX() < pacmanPosition.getX() + pacman.getWidth()
+                            && foodPosition.getY() >= pacmanPosition.getY()
+                            && foodPosition.getY() < pacmanPosition.getY() + pacman.getHeight();
+
+            if (isInsidePacman) {
+                eatenFood = food;
+                break;
+            }
+        }
+
+        if (eatenFood != null) {
+            score += eatenFood.getPoints();
+            board.removeFood(eatenFood);
+        }
+    }
+
     @Override
     public void keyReleased(KeyEvent e) {
 
@@ -160,6 +219,7 @@ public class GamePanel extends JPanel implements KeyListener, ActionListener {
     @Override
     public void actionPerformed(ActionEvent e) {
         updatePacman();
+        checkFoodCollision();
         repaint();
     }
 }

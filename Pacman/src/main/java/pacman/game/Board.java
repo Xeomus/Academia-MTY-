@@ -1,5 +1,6 @@
 package pacman.game;
 
+import pacman.model.Food;
 import pacman.model.Position;
 import pacman.model.Wall;
 
@@ -14,6 +15,8 @@ public class Board {
 
     private static final int TILE_SIZE = 32;
     private final List<Wall> walls = new ArrayList<>();
+    private static final int FOOD_POINTS = 10;
+    private final List<Food> foods = new ArrayList<>();
 
     private final String[] tileMap = {
             "XXXXXXXXXXXXXXXXXXX",
@@ -40,10 +43,10 @@ public class Board {
     };
 
     public Board() {
-        loadWalls();
+        loadMap();
     }
 
-    private void loadWalls() {
+    private void loadMap() {
 
         for (int row = 0; row < tileMap.length; row++) {
 
@@ -53,21 +56,46 @@ public class Board {
 
                 char tile = currentRow.charAt(column);
 
-                if (tile == 'X') {
+                int x = column * TILE_SIZE;
+                int y = row * TILE_SIZE;
 
-                    int x = column * TILE_SIZE;
-                    int y = row * TILE_SIZE;
+                switch (tile) {
 
-                    walls.add(
-                            new Wall(
-                                    new Position(x, y),
-                                    TILE_SIZE,
-                                    TILE_SIZE
-                            )
-                    );
+                    case 'X':
+                        walls.add(
+                                new Wall(
+                                        new Position(x, y),
+                                        TILE_SIZE,
+                                        TILE_SIZE
+                                )
+                        );
+                        break;
+
+                    case ' ':
+                        foods.add(
+                                new Food(
+                                        new Position(
+                                                x + TILE_SIZE / 2,
+                                                y + TILE_SIZE / 2
+                                        ),
+                                        FOOD_POINTS
+                                )
+                        );
+                        break;
+
+                    default:
+                        break;
                 }
             }
         }
+    }
+
+    public List<Food> getFoods() {
+        return Collections.unmodifiableList(foods);
+    }
+
+    public void removeFood(Food food) {
+        foods.remove(food);
     }
 
     public List<Wall> getWalls(){
