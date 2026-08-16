@@ -21,11 +21,11 @@ public class GamePanel extends JPanel implements KeyListener, ActionListener {
     private static final int TILE_SIZE= 32;
     private static final int FOOD_SIZE = 4;
 
-    private int score = 0;
+    private final GameState gameState;
 
     private static final int BOARD_WIDTH = COLS * TILE_SIZE;
     private static final int BOARD_HEIGHT = ROWS * TILE_SIZE;
-    private final Timer gameloop;
+    private final Timer gameLoop;
     private final Board board;
     private final Image wallImage;
     /*
@@ -55,6 +55,7 @@ public class GamePanel extends JPanel implements KeyListener, ActionListener {
         setFocusable(true);
         addKeyListener(this);
 
+        gameState = new GameState();
         pacman = new Pacman(
                 new Position(9 * TILE_SIZE, 15 * TILE_SIZE),
                 TILE_SIZE,
@@ -74,8 +75,8 @@ public class GamePanel extends JPanel implements KeyListener, ActionListener {
         inkyImage = loadImage("/blueGhost.png");
         clydeImage = loadImage("/orangeGhost.png");
 
-        gameloop = new Timer(500, this);
-        gameloop.start();
+        gameLoop = new Timer(500, this);
+        gameLoop.start();
 
     }
 
@@ -114,7 +115,7 @@ public class GamePanel extends JPanel implements KeyListener, ActionListener {
         drawFood(g);
         drawGhosts(g);
         drawPacman(g);
-        drawScore(g);
+        drawHud(g);
     }
 
     private void drawFood(Graphics g) {
@@ -134,18 +135,38 @@ public class GamePanel extends JPanel implements KeyListener, ActionListener {
         }
     }
 
-    private void drawScore(Graphics g) {
+    private void drawHud(Graphics g) {
 
         g.setColor(Color.WHITE);
-        g.setFont(new Font("Arial", Font.BOLD, 20));
-
-        g.drawString(
-                "Score: " + score,
-                TILE_SIZE / 2,
-                TILE_SIZE / 2
+        g.setFont(
+                new Font(
+                        "Arial",
+                        Font.BOLD,
+                        20
+                )
         );
-    }
 
+        if (gameState.isGameOver()) {
+
+            g.drawString(
+                    "GAME OVER - Score: "
+                            + gameState.getScore(),
+                    TILE_SIZE / 2,
+                    TILE_SIZE / 2
+            );
+
+        } else {
+
+            g.drawString(
+                    "Lives: "
+                            + gameState.getLives()
+                            + "  Score: "
+                            + gameState.getScore(),
+                    TILE_SIZE / 2,
+                    TILE_SIZE / 2
+            );
+        }
+    }
     private void drawWalls(Graphics g){
         for (Wall wall: board.getWalls()) {
             Position position = wall.getPosition();
@@ -202,6 +223,17 @@ public class GamePanel extends JPanel implements KeyListener, ActionListener {
 
     @Override
     public void keyPressed(KeyEvent e) {
+
+        if (gameState.isGameOver()) {
+
+            if (e.getKeyCode() == KeyEvent.VK_ENTER) {
+
+                restartGame();
+            }
+
+            return;
+        }
+
         switch (e.getKeyCode()) {
             case KeyEvent.VK_UP:
                 pacman.setDirection(Direction.UP);
@@ -218,6 +250,15 @@ public class GamePanel extends JPanel implements KeyListener, ActionListener {
             default:
                 return;
         }
+
+    }
+
+    private void restartGame() {
+
+        gameState.reset();
+        resetPositions();
+        gameLoop.start();
+        repaint();
     }
 
     private void updatePacman() {
@@ -266,6 +307,40 @@ public class GamePanel extends JPanel implements KeyListener, ActionListener {
         }
     }
 
+    private void resetPositions() {
+
+        pacman.resetPosition();
+        pacman.setDirection(Direction.RIGHT);
+
+        for (Ghost ghost : board.getGhosts()) {
+
+            ghost.resetPosition();
+
+            ghost.updateDirection(
+                    pacman.getPosition()
+            );
+        }
+    }
+
+    private void checkGhostCollision() {
+
+        for (Ghost ghost : board.getGhosts()) {
+
+            if (CollisionDetector.isColliding(pacman, ghost)) {
+
+                gameState.loseLife();
+
+                if (gameState.isGameOver()) {
+                    gameLoop.stop();
+                    return;
+                }
+
+                resetPositions();
+                return;
+            }
+        }
+    }
+
     private void checkFoodCollision() {
 
         Food eatenFood = null;
@@ -289,7 +364,9 @@ public class GamePanel extends JPanel implements KeyListener, ActionListener {
         }
 
         if (eatenFood != null) {
-            score += eatenFood.getPoints();
+            gameState.addScore(
+                    eatenFood.getPoints()
+            );
             board.removeFood(eatenFood);
         }
     }
@@ -303,7 +380,10 @@ public class GamePanel extends JPanel implements KeyListener, ActionListener {
     public void actionPerformed(ActionEvent e) {
         updatePacman();
         updateGhosts();
+
+        checkGhostCollision();
         checkFoodCollision();
+
         repaint();
     }
 }

@@ -51,6 +51,10 @@ public class Board {
 
     private void loadMap() {
 
+        walls.clear();
+        foods.clear();
+        ghosts.clear();
+
         for (int row = 0; row < tileMap.length; row++) {
 
             String currentRow = tileMap[row];
@@ -139,6 +143,10 @@ public class Board {
                 }
             }
         }
+    }
+
+    public void reset() {
+        loadMap();
     }
 
     public List<Ghost> getGhosts() {
