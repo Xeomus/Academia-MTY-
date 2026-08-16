@@ -17,9 +17,15 @@ public abstract class Entity {
     * */
 
     private Position position;
+    private final Position initialPosition;
 
     protected Entity(Position position) {
         this.position = position;
+        this.initialPosition = position;
+    }
+
+    public void resetPosition() {
+        this.position = initialPosition;
     }
 
     /*
