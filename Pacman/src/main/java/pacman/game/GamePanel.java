@@ -32,7 +32,10 @@ public class GamePanel extends JPanel implements KeyListener {
     * position is immutable object but Pacman doesn't
     * */
     private final Pacman pacman;
-    private final Image pacmanImage;
+    private final Image pacmanUpImage;
+    private final Image pacmanDownImage;
+    private final Image pacmanLeftImage;
+    private final Image pacmanRightImage;
 
     public GamePanel() {
         setPreferredSize(new Dimension(BOARD_WIDTH, BOARD_HEIGHT));
@@ -44,10 +47,15 @@ public class GamePanel extends JPanel implements KeyListener {
                 new Position(9 * TILE_SIZE, 15 * TILE_SIZE)
         );
 
-        pacmanImage = new ImageIcon(
-                GamePanel.class.getResource("/pacmanRight.png")
-        ).getImage();
+        pacmanUpImage = loadImage("/pacmanUp.png");
+        pacmanDownImage = loadImage("/pacmanDown.png");
+        pacmanLeftImage = loadImage("/pacmanLeft.png");
+        pacmanRightImage = loadImage("/pacmanRight.png");
 
+    }
+
+    private Image loadImage(String path) {
+        return new ImageIcon(GamePanel.class.getResource(path)).getImage();
     }
 
     @Override
@@ -58,7 +66,25 @@ public class GamePanel extends JPanel implements KeyListener {
 
     private void drawPacman(Graphics g){
         Position position = pacman.getPosition();
-        g.drawImage(pacmanImage, position.getX(), position.getY(), TILE_SIZE, TILE_SIZE, null);
+        Image image;
+
+        switch (pacman.getDirection()) {
+            case UP:
+                image = pacmanUpImage;
+                break;
+            case DOWN:
+                image = pacmanDownImage;
+                break;
+            case LEFT:
+                image = pacmanLeftImage;
+                break;
+            case RIGHT:
+                image = pacmanRightImage;
+                break;
+            default:
+                image = pacmanRightImage;
+        }
+        g.drawImage(image, position.getX(), position.getY(), TILE_SIZE, TILE_SIZE, null);
     }
 
     @Override
