@@ -6,6 +6,8 @@ import pacman.model.Pacman;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 
@@ -13,13 +15,14 @@ import java.awt.event.KeyListener;
 * gamePanel IS-A JPanel
 * gamePanel HAS-a KeyListener
 * */
-public class GamePanel extends JPanel implements KeyListener {
+public class GamePanel extends JPanel implements KeyListener, ActionListener {
     private static final int ROWS = 21;
     private static final int COLS = 19;
     private static final int TILE_SIZE= 32;
 
     private static final int BOARD_WIDTH = COLS * TILE_SIZE;
     private static final int BOARD_HEIGHT = ROWS * TILE_SIZE;
+    private final Timer gameloop;
 
     /*
     * building two objects by composition
@@ -51,6 +54,9 @@ public class GamePanel extends JPanel implements KeyListener {
         pacmanDownImage = loadImage("/pacmanDown.png");
         pacmanLeftImage = loadImage("/pacmanLeft.png");
         pacmanRightImage = loadImage("/pacmanRight.png");
+
+        gameloop = new Timer(500, this);
+        gameloop.start();
 
     }
 
@@ -110,12 +116,16 @@ public class GamePanel extends JPanel implements KeyListener {
             default:
                 return;
         }
-        pacman.move();
-        repaint();
     }
 
     @Override
     public void keyReleased(KeyEvent e) {
 
+    }
+
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        pacman.move();
+        repaint();
     }
 }
