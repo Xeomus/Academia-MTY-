@@ -1,8 +1,26 @@
 package pacman.game;
 
 /*
-* GameState controls score/lives
-* */
+ * GameState represents and controls the current state
+ * of the game.
+ *
+ * It is responsible for:
+ * - Score
+ * - Lives
+ * - Game Over state
+ *
+ * This class is an example of encapsulation because
+ * its internal state is private and cannot be modified
+ * directly from outside the class.
+ *
+ * Instead of exposing setters, GameState provides
+ * specific operations such as:
+ * - addScore()
+ * - loseLife()
+ * - reset()
+ *
+ * This allows the class to control how its state changes.
+ */
 
 public class GameState {
 
