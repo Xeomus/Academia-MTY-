@@ -21,6 +21,7 @@ import java.util.List;
  * */
 public class GamePanel extends JPanel implements KeyListener, ActionListener {
 
+    private static final int TUNNEL_ROW = 9;
     private static final int ROWS = 21;
     private static final int COLS = 19;
     private static final int TILE_SIZE = 32;
@@ -422,7 +423,17 @@ public class GamePanel extends JPanel implements KeyListener, ActionListener {
         }
 
         if (canPacmanMove(pacman.getDirection())) {
-            pacman.move();
+
+            Position nextPosition =
+                    pacman.getNextPosition();
+
+            nextPosition =
+                    applyHorizontalTunnel(
+                            nextPosition,
+                            pacman.getWidth()
+                    );
+
+            pacman.moveTo(nextPosition);
         }
     }
 
@@ -460,7 +471,18 @@ public class GamePanel extends JPanel implements KeyListener, ActionListener {
                 );
             }
 
-            ghost.move();
+            Position nextPosition =
+                    ghost.getNextPosition(
+                            ghost.getDirection()
+                    );
+
+            nextPosition =
+                    applyHorizontalTunnel(
+                            nextPosition,
+                            ghost.getWidth()
+                    );
+
+            ghost.moveTo(nextPosition);
         }
     }
 
@@ -498,6 +520,30 @@ public class GamePanel extends JPanel implements KeyListener, ActionListener {
         }
 
         return validDirections;
+    }
+
+
+    private Position applyHorizontalTunnel(
+            Position position,
+            int width
+    ) {
+
+        int x = position.getX();
+        int y = position.getY();
+
+        int tunnelY = TUNNEL_ROW * TILE_SIZE;
+
+        if (y != tunnelY) {
+            return position;
+        }
+
+        if (x + width <= 0) {
+            x = BOARD_WIDTH;
+        } else if (x >= BOARD_WIDTH) {
+            x = -width;
+        }
+
+        return new Position(x, y);
     }
 
     private List<Direction> removeReverseDirection(
