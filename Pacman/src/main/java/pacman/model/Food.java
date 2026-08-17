@@ -1,9 +1,17 @@
 package pacman.model;
 
 /*
-* Food HAS-A Position
-* Food IS-A Entity
-* */
+ * Food represents a pellet that Pacman can eat.
+ *
+ * Food HAS-A Position.
+ *
+ * Food is not an Entity because it does not need
+ * common Entity behaviors such as movement or
+ * changing its position.
+ *
+ * Food is final because it is not intended
+ * to be extended.
+ */
 public final class Food {
 
     private final Position position;
