@@ -9,18 +9,48 @@ import java.util.Collections;
 import java.util.List;
 
 /*
-* HAS-A List<Wall>
-* HAS-A List<Food>
-* HAS-A List<Ghost>
-* */
+ * Board represents the game maze and the objects
+ * that are created from the tile map.
+ *
+ * Board HAS-A List<Wall>.
+ * Board HAS-A List<Food>.
+ * Board HAS-A List<Ghost>.
+ *
+ * The tile map is used as the source of truth
+ * to build the walls, food pellets and ghosts.
+ */
 public class Board {
 
     private static final int TILE_SIZE = 32;
-    private final List<Wall> walls = new ArrayList<>();
     private static final int FOOD_POINTS = 10;
+
+    /*
+     * Collections that store the objects currently
+     * present on the board.
+     *
+     * Generics provide type safety:
+     * - List<Wall> only stores Wall objects.
+     * - List<Food> only stores Food objects.
+     * - List<Ghost> only stores Ghost objects.
+     */
+    private final List<Wall> walls = new ArrayList<>();
     private final List<Food> foods = new ArrayList<>();
     private final List<Ghost> ghosts = new ArrayList<>();
 
+    /*
+     * Text representation of the game board.
+     *
+     * Each character represents a different element:
+     *
+     * X -> Wall
+     * ' ' -> Food
+     * P -> Pacman spawn
+     * r -> Blinky
+     * p -> Pinky
+     * b -> Inky
+     * o -> Clyde
+     * O -> Empty tunnel area
+     */
     private final String[] tileMap = {
             "XXXXXXXXXXXXXXXXXXX",
             "X        X        X",
@@ -50,6 +80,38 @@ public class Board {
         loadMap();
     }
 
+    public void reset() {
+        loadMap();
+    }
+
+    /*
+     * Returns a read-only view of the Ghost/Food/Wall collection.
+     *
+     * Collections.unmodifiableList prevents external
+     * classes from modifying the internal list directly.
+     */
+    public List<Ghost> getGhosts() {
+        return Collections.unmodifiableList(ghosts);
+    }
+
+    public List<Wall> getWalls(){
+        return Collections.unmodifiableList(walls);
+    }
+
+    public List<Food> getFoods() {
+        return Collections.unmodifiableList(foods);
+    }
+
+    public void removeFood(Food food) {
+        foods.remove(food);
+    }
+
+    /*
+     * Rebuilds all board objects from tileMap.
+     *
+     * Existing collections are cleared first so that
+     * objects are not duplicated when the board resets.
+     */
     private void loadMap() {
 
         walls.clear();
@@ -146,28 +208,10 @@ public class Board {
         }
     }
 
-    public void reset() {
-        loadMap();
-    }
-
-    public List<Ghost> getGhosts() {
-        return Collections.unmodifiableList(ghosts);
-    }
-
-    public List<Food> getFoods() {
-        return Collections.unmodifiableList(foods);
-    }
-
-    public void removeFood(Food food) {
-        foods.remove(food);
-    }
-
-    public List<Wall> getWalls(){
-        return Collections.unmodifiableList(walls);
-    }
-
+    /*
+    * Representation of valid characters (white-list)
+    * */
     private boolean isValidTile(char tile) {
-
         return tile == 'X'
                 || tile == 'O'
                 || tile == ' '
@@ -178,6 +222,18 @@ public class Board {
                 || tile == 'o';
     }
 
+    /*
+     * Validates the tile map before it is loaded.
+     *
+     * The validation checks:
+     * - the map is not empty
+     * - every row has the same length
+     * - every tile character is valid
+     * - exactly one Pacman spawn exists
+     *
+     * InvalidMapException is thrown when one of
+     * these rules is violated.
+     */
     private void validateMap() {
 
         if (tileMap.length == 0) {
