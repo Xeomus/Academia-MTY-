@@ -1,9 +1,14 @@
 package pacman.model;
 
 /*
-* Wall IS-A Entity
-* Wall HAS-A Position
-* */
+ * Wall represents a wall inside the game board.
+ *
+ * Wall IS-A Entity through inheritance.
+ * Wall implements Collidable because other entities
+ * can detect collisions with it.
+ *
+ * Wall HAS-A Position through Entity.
+ */
 public class Wall extends Entity implements Collidable {
 
     private final int width;
@@ -15,6 +20,9 @@ public class Wall extends Entity implements Collidable {
         this.width = width;
     }
 
+    /*
+    * comes from Collidable
+    * */
     @Override
     public int getWidth() {
         return width;
