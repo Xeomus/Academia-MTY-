@@ -2,12 +2,15 @@ package pacman.strategy;
 
 import pacman.model.Direction;
 import pacman.model.Ghost;
-import pacman.model.Position;
+import pacman.model.Pacman;
+
+import java.util.List;
 
 public interface MovementStrategy {
 
     Direction chooseDirection(
             Ghost ghost,
-            Position target
+            Pacman pacman,
+            List<Direction> validDirections
     );
 }

@@ -2,28 +2,26 @@ package pacman.strategy;
 
 import pacman.model.Direction;
 import pacman.model.Ghost;
-import pacman.model.Position;
+import pacman.model.Pacman;
 
+import java.util.List;
 import java.util.Random;
 
 public class RandomMovementStrategy implements MovementStrategy {
 
     private final Random random = new Random();
 
-    private static final Direction[] DIRECTIONS = {
-            Direction.UP,
-            Direction.DOWN,
-            Direction.LEFT,
-            Direction.RIGHT,
-    };
-
     @Override
     public Direction chooseDirection(
             Ghost ghost,
-            Position target
+            Pacman pacman,
+            List<Direction> validDirections
     ) {
-        int index = random.nextInt(DIRECTIONS.length);
-        return DIRECTIONS[index];
-    }
 
+        int index = random.nextInt(
+                validDirections.size()
+        );
+
+        return validDirections.get(index);
+    }
 }
