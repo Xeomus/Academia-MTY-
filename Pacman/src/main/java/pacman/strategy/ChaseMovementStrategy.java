@@ -2,34 +2,62 @@ package pacman.strategy;
 
 import pacman.model.Direction;
 import pacman.model.Ghost;
+import pacman.model.Pacman;
 import pacman.model.Position;
+
+import java.util.List;
 
 public class ChaseMovementStrategy implements MovementStrategy {
 
     @Override
     public Direction chooseDirection(
             Ghost ghost,
-            Position target
+            Pacman pacman,
+            List<Direction> validDirections
     ) {
 
-        Position ghostPosition = ghost.getPosition();
+        Position target = pacman.getPosition();
 
-        int horizontalDistance =
-                target.getX() - ghostPosition.getX();
+        Direction bestDirection =
+                validDirections.getFirst();
 
-        int verticalDistance =
-                target.getY() - ghostPosition.getY();
+        double shortestDistance =
+                Double.MAX_VALUE;
 
-        if (Math.abs(horizontalDistance)
-                > Math.abs(verticalDistance)) {
+        for (Direction direction : validDirections) {
 
-            return horizontalDistance > 0
-                    ? Direction.RIGHT
-                    : Direction.LEFT;
+            Position nextPosition =
+                    ghost.getNextPosition(direction);
+
+            double distance =
+                    calculateDistance(
+                            nextPosition,
+                            target
+                    );
+
+            if (distance < shortestDistance) {
+                shortestDistance = distance;
+                bestDirection = direction;
+            }
         }
 
-        return verticalDistance > 0
-                ? Direction.DOWN
-                : Direction.UP;
+        return bestDirection;
+    }
+
+    private double calculateDistance(
+            Position first,
+            Position second
+    ) {
+
+        int deltaX =
+                second.getX() - first.getX();
+
+        int deltaY =
+                second.getY() - first.getY();
+
+        return Math.sqrt(
+                deltaX * deltaX
+                        + deltaY * deltaY
+        );
     }
 }
