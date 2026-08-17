@@ -2,6 +2,8 @@ package pacman.model;
 
 import pacman.strategy.MovementStrategy;
 
+import java.util.List;
+
 /*
 * Ghost IS-A Entity
 * Ghost IS Movable
@@ -50,33 +52,45 @@ public class Ghost extends Entity implements Movable, Collidable {
         this.movementStrategy = movementStrategy;
     }
 
-    public void updateDirection(Position target) {
+    public void updateDirection(
+            Pacman pacman,
+            List<Direction> validDirections
+    ) {
+
         direction = movementStrategy.chooseDirection(
                 this,
-                target
+                pacman,
+                validDirections
         );
     }
-    public Position getNextPosition() {
+
+    public Position getNextPosition(Direction direction) {
+
         Position currentPosition = getPosition();
 
         int x = currentPosition.getX();
         int y = currentPosition.getY();
 
         switch (direction) {
+
             case UP:
-                y-=SPEED;
+                y -= SPEED;
                 break;
+
             case DOWN:
-                y+=SPEED;
+                y += SPEED;
                 break;
+
             case LEFT:
-                x-=SPEED;
+                x -= SPEED;
                 break;
+
             case RIGHT:
-                x+=SPEED;
+                x += SPEED;
                 break;
         }
-        return new Position(x,y);
+
+        return new Position(x, y);
     }
 
     @Override
@@ -91,7 +105,7 @@ public class Ghost extends Entity implements Movable, Collidable {
 
     @Override
     public void move() {
-        setPosition(getNextPosition());
+        setPosition(getNextPosition(direction));
     }
 
     public void moveTo(Position position) {

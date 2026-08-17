@@ -1,8 +1,7 @@
 package pacman.game;
 
 import pacman.model.*;
-import pacman.strategy.ChaseMovementStrategy;
-import pacman.strategy.RandomMovementStrategy;
+import pacman.strategy.*;
 import pacman.exception.InvalidMapException;
 
 import java.util.ArrayList;
@@ -111,7 +110,7 @@ public class Board {
                                         TILE_SIZE,
                                         TILE_SIZE,
                                         GhostType.PINKY,
-                                        new RandomMovementStrategy()
+                                        new AmbushMovementStrategy()
                                 )
                         );
                         break;
@@ -123,7 +122,7 @@ public class Board {
                                         TILE_SIZE,
                                         TILE_SIZE,
                                         GhostType.INKY,
-                                        new RandomMovementStrategy()
+                                        new FlankMovementStrategy()
                                 )
                         );
                         break;
@@ -135,7 +134,7 @@ public class Board {
                                         TILE_SIZE,
                                         TILE_SIZE,
                                         GhostType.CLYDE,
-                                        new RandomMovementStrategy()
+                                        new HybridMovementStrategy()
                                 )
                         );
                         break;
