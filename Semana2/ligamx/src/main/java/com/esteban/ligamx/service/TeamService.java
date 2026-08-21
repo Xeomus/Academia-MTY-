@@ -1,4 +1,4 @@
-package com.esteban.ligamx.Service;
+package com.esteban.ligamx.service;
 
 import com.esteban.ligamx.model.Team;
 import com.esteban.ligamx.repository.TeamRepository;
