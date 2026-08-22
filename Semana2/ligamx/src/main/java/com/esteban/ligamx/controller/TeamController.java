@@ -2,6 +2,7 @@ package com.esteban.ligamx.controller;
 
 import com.esteban.ligamx.model.Team;
 import com.esteban.ligamx.service.TeamService;
+import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -33,15 +34,16 @@ public class TeamController {
     }
 
     @PostMapping
-    public ResponseEntity<Team> createTeam(@RequestBody Team team) {
+    public ResponseEntity<Team> createTeam(@Valid @RequestBody Team team) {
         Team savedTeam = teamService.save(team);
+
         return ResponseEntity.ok(savedTeam);
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<Team> updateTeam(
             @PathVariable Long id,
-            @RequestBody Team updatedTeam) {
+            @Valid @RequestBody Team updatedTeam) {
 
         return teamService.updateTeam(id, updatedTeam)
                 .map(team -> ResponseEntity.ok(team))
