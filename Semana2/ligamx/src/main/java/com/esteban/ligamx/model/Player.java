@@ -1,8 +1,6 @@
 package com.esteban.ligamx.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
+import jakarta.persistence.*;
 import org.springframework.data.annotation.Id;
 
 @Entity
@@ -19,6 +17,10 @@ public class Player {
     private String position;
 
     private String nationality;
+
+    @ManyToOne
+    @JoinColumn(name = "team_id")
+    private Team team;
 
     public Long getId() {
         return id;
@@ -54,5 +56,13 @@ public class Player {
 
     public void setNationality(String nationality) {
         this.nationality = nationality;
+    }
+
+    public Team getTeam() {
+        return team;
+    }
+
+    public void setTeam(Team team) {
+        this.team = team;
     }
 }
