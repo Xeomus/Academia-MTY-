@@ -38,6 +38,16 @@ public class TeamController {
         return ResponseEntity.ok(savedTeam);
     }
 
+    @PutMapping("/{id}")
+    public ResponseEntity<Team> updateTeam(
+            @PathVariable Long id,
+            @RequestBody Team updatedTeam) {
+
+        return teamService.updateTeam(id, updatedTeam)
+                .map(team -> ResponseEntity.ok(team))
+                .orElseGet(() -> ResponseEntity.notFound().build());
+    }
+
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteTeamById(@PathVariable Long id) {
         teamService.deleteTeamById(id);
