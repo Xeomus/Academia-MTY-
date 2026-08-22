@@ -28,6 +28,18 @@ public class TeamService {
         return teamRepository.save(team);
     }
 
+    public Optional<Team> updateTeam(Long id, Team updatedTeam) {
+        return teamRepository.findById(id)
+                .map(team -> {
+                    team.setName(updatedTeam.getName());
+                    team.setCity(updatedTeam.getCity());
+                    team.setStadium(updatedTeam.getStadium());
+                    team.setFoundingYear(updatedTeam.getFoundingYear());
+
+                    return teamRepository.save(team);
+                });
+    }
+
     public void deleteTeamById(Long id) {
         teamRepository.deleteById(id);
     }
