@@ -4,17 +4,26 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotBlank;
 
 @Entity
 public class Team {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
+    private Long id;
 
+    @NotBlank(message = "Team name is required")
     private String name;
+
+    @NotBlank(message = "City is required")
     private String city;
+
+    @NotBlank(message = "Stadium is required")
     private String stadium;
+
+    @Min(value = 1800, message = "Founding year must be greater than or equal to 1800")
     private Integer foundingYear;
 
     public Team() {}
