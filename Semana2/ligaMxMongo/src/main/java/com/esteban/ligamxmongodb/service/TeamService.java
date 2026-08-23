@@ -57,4 +57,25 @@ public class TeamService {
         return teamRepository.findById(teamId)
                 .map(team -> team.getPlayers());
     }
+
+    public Optional<Player> updatePlayer(
+            String teamId,
+            String playerId,
+            Player updatedPlayer) {
+
+        return teamRepository.findById(teamId)
+                .flatMap(team -> team.getPlayers().stream()
+                        .filter(player -> playerId.equals(player.getId()))
+                        .findFirst()
+                        .map(player -> {
+                            player.setName(updatedPlayer.getName());
+                            player.setNumber(updatedPlayer.getNumber());
+                            player.setPosition(updatedPlayer.getPosition());
+                            player.setNationality(updatedPlayer.getNationality());
+
+                            teamRepository.save(team);
+
+                            return player;
+                        }));
+    }
 }

@@ -72,4 +72,15 @@ public class TeamController {
                 .map(players -> ResponseEntity.ok(players))
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }
+
+    @PutMapping("/{teamId}/players/{playerId}")
+    public ResponseEntity<Player> updatePlayer(
+            @PathVariable String teamId,
+            @PathVariable String playerId,
+            @RequestBody Player updatedPlayer) {
+
+        return teamService.updatePlayer(teamId, playerId, updatedPlayer)
+                .map(player -> ResponseEntity.ok(player))
+                .orElseGet(() -> ResponseEntity.notFound().build());
+    }
 }
