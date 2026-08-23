@@ -2,7 +2,7 @@
   "info": {
     "_postman_id": "bb0eb280-f1f2-4c4c-9cd6-62fa0d30cd35",
     "name": "Liga MX API",
-    "description": "Colección para probar todos los endpoints de equipos y jugadores. No contiene scripts de pre-request ni de tests.",
+    "description": "Colección para probar todos los endpoints de equipos y jugadores.",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
   },
   "variable": [
