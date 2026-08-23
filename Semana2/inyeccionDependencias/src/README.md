@@ -63,12 +63,12 @@ debe recibir un objeto que cumpla con el contrato de la interfaz `MessageSender`
 
 ## Ventajas
 
-# Acoplamiento
+Acoplamiento
 
 Cada clase depende de una abstraccion, haciendo que la implementacion concreta se decida fuera de ella, permitinedo
 modificar el comportamiento sin modificar `MesaggeService`.
 
-# Testeabilidad
+Testeabilidad
 
 Como MessageService no crea internamente un EmailSender, SmsSender o PigeonSender,
 durante una prueba se le podría proporcionar una implementación falsa de MessageSender.
@@ -80,6 +80,8 @@ MessageSender fakeSender = new FakeMessageSender();
 MessageService service = new MessageService(fakeSender);
 
 Así podemos probar MessageService sin tener que enviar realmente un correo, SMS o paloma.
+
+## Conclusión
 
 En este proyecto, MessageService no decide si los mensajes se envían por correo, SMS o paloma mensajera. 
 Esa decisión se realiza fuera de la clase y la implementación elegida se inyecta mediante el constructor.
