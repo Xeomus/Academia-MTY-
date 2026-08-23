@@ -4,6 +4,7 @@ import com.esteban.ligamx.model.Player;
 import com.esteban.ligamx.service.PlayerService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import jakarta.validation.Valid;
 
 import java.util.List;
 
@@ -37,7 +38,7 @@ public class PlayerController {
     @PostMapping("/teams/{teamId}/players")
     public ResponseEntity<Player> createPlayer(
             @PathVariable Long teamId,
-            @RequestBody Player player) {
+            @Valid @RequestBody Player player) {
 
         return playerService.createPlayerForTeam(teamId, player)
                 .map(savedPlayer -> ResponseEntity.ok(savedPlayer))
@@ -47,7 +48,7 @@ public class PlayerController {
     @PutMapping("/players/{id}")
     public ResponseEntity<Player> updatePlayer(
             @PathVariable Long id,
-            @RequestBody Player updatedPlayer) {
+            @Valid @RequestBody Player updatedPlayer) {
 
         return playerService.updatePlayer(id, updatedPlayer)
                 .map(player -> ResponseEntity.ok(player))
