@@ -43,6 +43,18 @@ public class PlayerService {
                 });
     }
 
+    public Optional<Player> updatePlayer(Long id, Player updatedPlayer) {
+        return playerRepository.findById(id)
+                .map(player -> {
+                    player.setName(updatedPlayer.getName());
+                    player.setNumber(updatedPlayer.getNumber());
+                    player.setPosition(updatedPlayer.getPosition());
+                    player.setNationality(updatedPlayer.getNationality());
+
+                    return playerRepository.save(player);
+                });
+    }
+
     public Player savePlayer(Player player) {
         return playerRepository.save(player);
     }

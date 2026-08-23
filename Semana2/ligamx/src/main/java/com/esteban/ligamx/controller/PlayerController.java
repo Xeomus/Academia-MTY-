@@ -43,4 +43,14 @@ public class PlayerController {
                 .map(savedPlayer -> ResponseEntity.ok(savedPlayer))
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }
+
+    @PutMapping("/players/{id}")
+    public ResponseEntity<Player> updatePlayer(
+            @PathVariable Long id,
+            @RequestBody Player updatedPlayer) {
+
+        return playerService.updatePlayer(id, updatedPlayer)
+                .map(player -> ResponseEntity.ok(player))
+                .orElseGet(() -> ResponseEntity.notFound().build());
+    }
 }
