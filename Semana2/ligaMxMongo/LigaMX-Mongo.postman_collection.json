@@ -1,0 +1,127 @@
+{
+  "info": {
+    "_postman_id": "a7c48e18-2cdf-4aa5-86f8-6f56889c5784",
+    "name": "Liga MX Mongo API",
+    "description": "Colección completa para probar la API de equipos y jugadores embebidos en MongoDB. Ejecute las solicitudes en el orden mostrado para guardar automáticamente teamId y playerId.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    { "key": "baseUrl", "value": "http://localhost:8080", "type": "string" },
+    { "key": "teamId", "value": "", "type": "string" },
+    { "key": "playerId", "value": "", "type": "string" }
+  ],
+  "item": [
+    {
+      "name": "1. Equipos",
+      "item": [
+        {
+          "name": "1.1 Crear equipo (guarda teamId)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"name\": \"Rayados de Monterrey\",\n  \"city\": \"Monterrey\",\n  \"stadium\": \"Estadio BBVA\",\n  \"foundingYear\": 1945\n}", "options": { "raw": { "language": "json" } } },
+            "url": "{{baseUrl}}/api/teams",
+            "description": "Crea un equipo. Todos los campos del ejemplo son obligatorios. Guarda el id devuelto en la variable teamId."
+          },
+          "event": [{ "listen": "test", "script": { "exec": [
+            "pm.test('Estado 200', () => pm.response.to.have.status(200));",
+            "pm.test('Devuelve un equipo con id', () => { const body = pm.response.json(); pm.expect(body.id).to.be.a('string').and.not.empty; pm.collectionVariables.set('teamId', body.id); });"
+          ], "type": "text/javascript" } }]
+        },
+        {
+          "name": "1.2 Listar equipos",
+          "request": { "method": "GET", "header": [], "url": "{{baseUrl}}/api/teams", "description": "Devuelve todos los equipos registrados." },
+          "event": [{ "listen": "test", "script": { "exec": ["pm.test('Estado 200', () => pm.response.to.have.status(200));", "pm.test('La respuesta es una lista', () => pm.expect(pm.response.json()).to.be.an('array'));"], "type": "text/javascript" } }]
+        },
+        {
+          "name": "1.3 Consultar equipo por id",
+          "request": { "method": "GET", "header": [], "url": "{{baseUrl}}/api/teams/{{teamId}}", "description": "Consulta el equipo identificado por teamId. Devuelve 404 si no existe." },
+          "event": [{ "listen": "test", "script": { "exec": ["pm.test('Estado 200', () => pm.response.to.have.status(200));", "pm.test('Es el equipo solicitado', () => pm.expect(pm.response.json().id).to.eql(pm.collectionVariables.get('teamId')));"], "type": "text/javascript" } }]
+        },
+        {
+          "name": "1.4 Crear equipos en lote",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "[\n  {\n    \"name\": \"Tigres UANL\",\n    \"city\": \"San Nicolás de los Garza\",\n    \"stadium\": \"Estadio Universitario\",\n    \"foundingYear\": 1960\n  },\n  {\n    \"name\": \"Club América\",\n    \"city\": \"Ciudad de México\",\n    \"stadium\": \"Estadio Ciudad de los Deportes\",\n    \"foundingYear\": 1916\n  }\n]", "options": { "raw": { "language": "json" } } },
+            "url": "{{baseUrl}}/api/teams/bulk",
+            "description": "Crea varios equipos. Nota: el controlador actual no anota la lista con @Valid."
+          },
+          "event": [{ "listen": "test", "script": { "exec": ["pm.test('Estado 200', () => pm.response.to.have.status(200));", "pm.test('Devuelve los dos equipos', () => pm.expect(pm.response.json()).to.have.lengthOf(2));"], "type": "text/javascript" } }]
+        },
+        {
+          "name": "1.5 Eliminar equipo (ejecutar al final)",
+          "request": { "method": "DELETE", "header": [], "url": "{{baseUrl}}/api/teams/{{teamId}}", "description": "Elimina el equipo guardado en teamId. Devuelve 204 o 404." },
+          "event": [{ "listen": "test", "script": { "exec": ["pm.test('Estado 204', () => pm.response.to.have.status(204));", "pm.test('Respuesta sin contenido', () => pm.expect(pm.response.text()).to.eql(''));"], "type": "text/javascript" } }]
+        }
+      ]
+    },
+    {
+      "name": "2. Jugadores embebidos",
+      "item": [
+        {
+          "name": "2.1 Agregar jugador (guarda playerId)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"name\": \"Sergio Canales\",\n  \"number\": 10,\n  \"position\": \"Mediocampista\",\n  \"nationality\": \"Española\"\n}", "options": { "raw": { "language": "json" } } },
+            "url": "{{baseUrl}}/api/teams/{{teamId}}/players",
+            "description": "Agrega un jugador al equipo. El servidor genera su UUID y el script lo guarda como playerId."
+          },
+          "event": [{ "listen": "test", "script": { "exec": [
+            "pm.test('Estado 200', () => pm.response.to.have.status(200));",
+            "pm.test('Jugador agregado con id', () => { const players = pm.response.json().players; pm.expect(players).to.be.an('array').and.not.empty; const player = players[players.length - 1]; pm.expect(player.id).to.be.a('string').and.not.empty; pm.collectionVariables.set('playerId', player.id); });"
+          ], "type": "text/javascript" } }]
+        },
+        {
+          "name": "2.2 Listar jugadores del equipo",
+          "request": { "method": "GET", "header": [], "url": "{{baseUrl}}/api/teams/{{teamId}}/players", "description": "Devuelve los jugadores embebidos en el equipo." },
+          "event": [{ "listen": "test", "script": { "exec": ["pm.test('Estado 200', () => pm.response.to.have.status(200));", "pm.test('La respuesta es una lista', () => pm.expect(pm.response.json()).to.be.an('array'));"], "type": "text/javascript" } }]
+        },
+        {
+          "name": "2.3 Actualizar jugador",
+          "request": {
+            "method": "PUT",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"name\": \"Sergio Canales\",\n  \"number\": 10,\n  \"position\": \"Mediocampista ofensivo\",\n  \"nationality\": \"Española\"\n}", "options": { "raw": { "language": "json" } } },
+            "url": "{{baseUrl}}/api/teams/{{teamId}}/players/{{playerId}}",
+            "description": "Reemplaza los datos editables del jugador. Devuelve 404 si el equipo o jugador no existe."
+          },
+          "event": [{ "listen": "test", "script": { "exec": ["pm.test('Estado 200', () => pm.response.to.have.status(200));", "pm.test('Actualiza la posición', () => pm.expect(pm.response.json().position).to.eql('Mediocampista ofensivo'));"], "type": "text/javascript" } }]
+        },
+        {
+          "name": "2.4 Eliminar jugador",
+          "request": { "method": "DELETE", "header": [], "url": "{{baseUrl}}/api/teams/{{teamId}}/players/{{playerId}}", "description": "Elimina el jugador embebido. Devuelve 204 o 404." },
+          "event": [{ "listen": "test", "script": { "exec": ["pm.test('Estado 204', () => pm.response.to.have.status(204));", "pm.test('Respuesta sin contenido', () => pm.expect(pm.response.text()).to.eql(''));"], "type": "text/javascript" } }]
+        }
+      ]
+    },
+    {
+      "name": "3. Casos de validación",
+      "item": [
+        {
+          "name": "3.1 Equipo inválido - campos vacíos y año fuera de rango",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"name\": \"\",\n  \"city\": \"\",\n  \"stadium\": \"\",\n  \"foundingYear\": 1700\n}", "options": { "raw": { "language": "json" } } },
+            "url": "{{baseUrl}}/api/teams",
+            "description": "Comprueba @NotBlank y @Min. Spring Boot debe responder 400."
+          },
+          "event": [{ "listen": "test", "script": { "exec": ["pm.test('Estado 400 por validación', () => pm.response.to.have.status(400));"], "type": "text/javascript" } }]
+        },
+        {
+          "name": "3.2 Jugador inválido - número fuera de rango",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"name\": \"Jugador inválido\",\n  \"number\": 100,\n  \"position\": \"Delantero\",\n  \"nationality\": \"Mexicana\"\n}", "options": { "raw": { "language": "json" } } },
+            "url": "{{baseUrl}}/api/teams/{{teamId}}/players",
+            "description": "Comprueba @Max(99). Requiere un teamId existente y debe responder 400."
+          },
+          "event": [{ "listen": "test", "script": { "exec": ["pm.test('Estado 400 por validación', () => pm.response.to.have.status(400));"], "type": "text/javascript" } }]
+        }
+      ]
+    }
+  ]
+}
