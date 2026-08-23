@@ -1,7 +1,8 @@
 package com.esteban.ligamx.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
-import org.springframework.data.annotation.Id;
+import jakarta.persistence.Id;
 
 @Entity
 public class Player {
@@ -20,6 +21,7 @@ public class Player {
 
     @ManyToOne
     @JoinColumn(name = "team_id")
+    @JsonIgnore
     private Team team;
 
     public Long getId() {
