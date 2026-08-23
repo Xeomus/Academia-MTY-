@@ -120,4 +120,4 @@ Ejemplo para crear o actualizar un jugador:
 6. Ejecuta las peticiones GET y PUT de ambas carpetas.
 7. Ejecuta primero **Eliminar jugador** y al final **Eliminar equipo**.
 
-La colección incluye los 11 endpoints y todos los métodos disponibles. Por requisito, no contiene scripts de pre-request ni scripts de pruebas; los identificadores se colocan manualmente en las variables de la colección.
+La colección incluye los 11 endpoints y todos los métodos disponibles.
