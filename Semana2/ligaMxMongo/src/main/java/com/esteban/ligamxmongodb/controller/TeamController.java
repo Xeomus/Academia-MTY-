@@ -1,5 +1,6 @@
 package com.esteban.ligamxmongodb.controller;
 
+import com.esteban.ligamxmongodb.model.Player;
 import com.esteban.ligamxmongodb.model.Team;
 import com.esteban.ligamxmongodb.service.TeamService;
 import org.springframework.http.ResponseEntity;
@@ -51,5 +52,49 @@ public class TeamController {
     @PostMapping("/bulk")
     public List<Team> createTeams(@RequestBody List<Team> teams) {
         return teamService.createTeams(teams);
+    }
+
+    @PostMapping("/{teamId}/players")
+    public ResponseEntity<Team> addPlayerToTeam(
+            @PathVariable String teamId,
+            @RequestBody Player player) {
+
+        return teamService.addPlayerToTeam(teamId, player)
+                .map(team -> ResponseEntity.ok(team))
+                .orElseGet(() -> ResponseEntity.notFound().build());
+    }
+
+    @GetMapping("/{teamId}/players")
+    public ResponseEntity<List<Player>> getPlayersByTeamId(
+            @PathVariable String teamId) {
+
+        return teamService.getPlayersByTeamId(teamId)
+                .map(players -> ResponseEntity.ok(players))
+                .orElseGet(() -> ResponseEntity.notFound().build());
+    }
+
+    @PutMapping("/{teamId}/players/{playerId}")
+    public ResponseEntity<Player> updatePlayer(
+            @PathVariable String teamId,
+            @PathVariable String playerId,
+            @RequestBody Player updatedPlayer) {
+
+        return teamService.updatePlayer(teamId, playerId, updatedPlayer)
+                .map(player -> ResponseEntity.ok(player))
+                .orElseGet(() -> ResponseEntity.notFound().build());
+    }
+
+    @DeleteMapping("/{teamId}/players/{playerId}")
+    public ResponseEntity<Void> deletePlayer(
+            @PathVariable String teamId,
+            @PathVariable String playerId) {
+
+        boolean deleted = teamService.deletePlayer(teamId, playerId);
+
+        if (!deleted) {
+            return ResponseEntity.notFound().build();
+        }
+
+        return ResponseEntity.noContent().build();
     }
 }
