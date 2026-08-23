@@ -2,6 +2,7 @@ package com.esteban.ligamxmongodb.model;
 
 public class Player {
 
+    private String id;
     private String name;
     private Integer number;
     private String position;
@@ -47,5 +48,13 @@ public class Player {
 
     public void setNationality(String nationality) {
         this.nationality = nationality;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
     }
 }

@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 @Service
 public class TeamService {
@@ -45,11 +46,13 @@ public class TeamService {
     public Optional<Team> addPlayerToTeam(String teamId, Player player) {
         return teamRepository.findById(teamId)
                 .map(team -> {
+                    player.setId(UUID.randomUUID().toString());
+
                     team.addPlayer(player);
+
                     return teamRepository.save(team);
                 });
     }
-
     public Optional<List<Player>> getPlayersByTeamId(String teamId) {
         return teamRepository.findById(teamId)
                 .map(team -> team.getPlayers());
