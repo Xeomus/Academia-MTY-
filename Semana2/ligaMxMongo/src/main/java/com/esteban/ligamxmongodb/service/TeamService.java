@@ -49,4 +49,9 @@ public class TeamService {
                     return teamRepository.save(team);
                 });
     }
+
+    public Optional<List<Player>> getPlayersByTeamId(String teamId) {
+        return teamRepository.findById(teamId)
+                .map(team -> team.getPlayers());
+    }
 }

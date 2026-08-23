@@ -63,4 +63,13 @@ public class TeamController {
                 .map(team -> ResponseEntity.ok(team))
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }
+
+    @GetMapping("/{teamId}/players")
+    public ResponseEntity<List<Player>> getPlayersByTeamId(
+            @PathVariable String teamId) {
+
+        return teamService.getPlayersByTeamId(teamId)
+                .map(players -> ResponseEntity.ok(players))
+                .orElseGet(() -> ResponseEntity.notFound().build());
+    }
 }
