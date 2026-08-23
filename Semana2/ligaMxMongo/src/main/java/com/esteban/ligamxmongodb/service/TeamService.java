@@ -1,5 +1,6 @@
 package com.esteban.ligamxmongodb.service;
 
+import com.esteban.ligamxmongodb.model.Player;
 import com.esteban.ligamxmongodb.model.Team;
 import com.esteban.ligamxmongodb.repository.TeamRepository;
 import org.springframework.stereotype.Service;
@@ -39,5 +40,13 @@ public class TeamService {
 
     public List<Team> createTeams(List<Team> teams) {
         return teamRepository.saveAll(teams);
+    }
+
+    public Optional<Team> addPlayerToTeam(String teamId, Player player) {
+        return teamRepository.findById(teamId)
+                .map(team -> {
+                    team.addPlayer(player);
+                    return teamRepository.save(team);
+                });
     }
 }
