@@ -36,4 +36,8 @@ public class TeamService {
         teamRepository.deleteById(id);
         return true;
     }
+
+    public List<Team> createTeams(List<Team> teams) {
+        return teamRepository.saveAll(teams);
+    }
 }
