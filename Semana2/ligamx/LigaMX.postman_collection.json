@@ -1,0 +1,211 @@
+{
+  "info": {
+    "_postman_id": "bb0eb280-f1f2-4c4c-9cd6-62fa0d30cd35",
+    "name": "Liga MX API",
+    "description": "Colección para probar todos los endpoints de equipos y jugadores. No contiene scripts de pre-request ni de tests.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:8080",
+      "type": "string"
+    },
+    {
+      "key": "teamId",
+      "value": "1",
+      "type": "string"
+    },
+    {
+      "key": "playerId",
+      "value": "1",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "Teams",
+      "item": [
+        {
+          "name": "Listar equipos",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/teams",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "teams"]
+            },
+            "description": "Devuelve todos los equipos. Respuesta esperada: 200 OK."
+          },
+          "response": []
+        },
+        {
+          "name": "Obtener equipo por ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/teams/{{teamId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "teams", "{{teamId}}"]
+            },
+            "description": "Respuesta esperada: 200 OK; 404 Not Found si el equipo no existe."
+          },
+          "response": []
+        },
+        {
+          "name": "Crear equipo",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Tigres UANL\",\n  \"city\": \"San Nicolas de los Garza\",\n  \"stadium\": \"Estadio Universitario\",\n  \"foundingYear\": 1960\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/teams",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "teams"]
+            },
+            "description": "Crea un equipo. Copia el id de la respuesta en teamId. Respuesta esperada: 200 OK."
+          },
+          "response": []
+        },
+        {
+          "name": "Actualizar equipo",
+          "request": {
+            "method": "PUT",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Tigres UANL Actualizado\",\n  \"city\": \"San Nicolas de los Garza\",\n  \"stadium\": \"Estadio Universitario\",\n  \"foundingYear\": 1960\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/teams/{{teamId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "teams", "{{teamId}}"]
+            },
+            "description": "Respuesta esperada: 200 OK; 404 Not Found si el equipo no existe."
+          },
+          "response": []
+        },
+        {
+          "name": "Eliminar equipo",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/teams/{{teamId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "teams", "{{teamId}}"]
+            },
+            "description": "Ejecuta esta petición al final. Respuesta esperada: 200 OK."
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Players",
+      "item": [
+        {
+          "name": "Listar jugadores",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/players",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "players"]
+            },
+            "description": "Devuelve todos los jugadores. Respuesta esperada: 200 OK."
+          },
+          "response": []
+        },
+        {
+          "name": "Obtener jugador por ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/players/{{playerId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "players", "{{playerId}}"]
+            },
+            "description": "Respuesta esperada: 200 OK; 404 Not Found si el jugador no existe."
+          },
+          "response": []
+        },
+        {
+          "name": "Listar jugadores por equipo",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/teams/{{teamId}}/players",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "teams", "{{teamId}}", "players"]
+            },
+            "description": "Devuelve los jugadores asociados al equipo. Respuesta esperada: 200 OK."
+          },
+          "response": []
+        },
+        {
+          "name": "Crear jugador en equipo",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Andre-Pierre Gignac\",\n  \"number\": 10,\n  \"position\": \"Delantero\",\n  \"nationality\": \"Francesa\"\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/teams/{{teamId}}/players",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "teams", "{{teamId}}", "players"]
+            },
+            "description": "Crea un jugador para el equipo indicado. Copia el id de la respuesta en playerId. Respuesta esperada: 200 OK."
+          },
+          "response": []
+        },
+        {
+          "name": "Actualizar jugador",
+          "request": {
+            "method": "PUT",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Andre-Pierre Gignac\",\n  \"number\": 10,\n  \"position\": \"Delantero centro\",\n  \"nationality\": \"Francesa\"\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/players/{{playerId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "players", "{{playerId}}"]
+            },
+            "description": "Respuesta esperada: 200 OK; 404 Not Found si el jugador no existe."
+          },
+          "response": []
+        },
+        {
+          "name": "Eliminar jugador",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/players/{{playerId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "players", "{{playerId}}"]
+            },
+            "description": "Elimina el jugador antes de eliminar el equipo. Respuesta esperada: 204 No Content; 404 Not Found si no existe."
+          },
+          "response": []
+        }
+      ]
+    }
+  ]
+}
