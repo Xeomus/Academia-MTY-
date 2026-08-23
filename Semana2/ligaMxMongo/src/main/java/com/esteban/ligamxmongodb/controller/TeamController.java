@@ -3,6 +3,7 @@ package com.esteban.ligamxmongodb.controller;
 import com.esteban.ligamxmongodb.model.Player;
 import com.esteban.ligamxmongodb.model.Team;
 import com.esteban.ligamxmongodb.service.TeamService;
+import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -31,7 +32,9 @@ public class TeamController {
     }
 
     @PostMapping
-    public ResponseEntity<Team> createTeam(@RequestBody Team team) {
+    public ResponseEntity<Team> createTeam(
+            @Valid @RequestBody Team team) {
+
         Team savedTeam = teamService.saveTeam(team);
 
         return ResponseEntity.ok(savedTeam);
@@ -57,7 +60,7 @@ public class TeamController {
     @PostMapping("/{teamId}/players")
     public ResponseEntity<Team> addPlayerToTeam(
             @PathVariable String teamId,
-            @RequestBody Player player) {
+            @Valid @RequestBody Player player) {
 
         return teamService.addPlayerToTeam(teamId, player)
                 .map(team -> ResponseEntity.ok(team))
@@ -77,7 +80,7 @@ public class TeamController {
     public ResponseEntity<Player> updatePlayer(
             @PathVariable String teamId,
             @PathVariable String playerId,
-            @RequestBody Player updatedPlayer) {
+            @Valid @RequestBody Player updatedPlayer) {
 
         return teamService.updatePlayer(teamId, playerId, updatedPlayer)
                 .map(player -> ResponseEntity.ok(player))

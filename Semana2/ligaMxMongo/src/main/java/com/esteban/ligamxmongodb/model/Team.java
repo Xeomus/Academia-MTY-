@@ -1,5 +1,9 @@
 package com.esteban.ligamxmongodb.model;
 
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
@@ -12,10 +16,20 @@ public class Team {
     @Id
     private String id;
 
+    @NotBlank(message = "Team name is required")
     private String name;
+
+    @NotBlank(message = "Team city is required")
     private String city;
+
+    @NotBlank(message = "Team stadium is required")
     private String stadium;
+
+    @NotNull(message = "Founding year is required")
+    @Min(value = 1800, message = "Founding year must be greater than 1800")
+    @Max(value = 2100, message = "Founding year must be less than 2100")
     private Integer foundingYear;
+
     private List<Player> players = new ArrayList<>();
 
     public Team() {
