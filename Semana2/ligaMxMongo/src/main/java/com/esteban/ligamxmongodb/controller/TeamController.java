@@ -83,4 +83,18 @@ public class TeamController {
                 .map(player -> ResponseEntity.ok(player))
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }
+
+    @DeleteMapping("/{teamId}/players/{playerId}")
+    public ResponseEntity<Void> deletePlayer(
+            @PathVariable String teamId,
+            @PathVariable String playerId) {
+
+        boolean deleted = teamService.deletePlayer(teamId, playerId);
+
+        if (!deleted) {
+            return ResponseEntity.notFound().build();
+        }
+
+        return ResponseEntity.noContent().build();
+    }
 }

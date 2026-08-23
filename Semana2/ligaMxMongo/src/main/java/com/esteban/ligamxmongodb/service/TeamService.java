@@ -78,4 +78,21 @@ public class TeamService {
                             return player;
                         }));
     }
+
+    public boolean deletePlayer(String teamId, String playerId) {
+
+        return teamRepository.findById(teamId)
+                .map(team -> {
+
+                    boolean removed = team.getPlayers()
+                            .removeIf(player -> playerId.equals(player.getId()));
+
+                    if (removed) {
+                        teamRepository.save(team);
+                    }
+
+                    return removed;
+                })
+                .orElse(false);
+    }
 }
