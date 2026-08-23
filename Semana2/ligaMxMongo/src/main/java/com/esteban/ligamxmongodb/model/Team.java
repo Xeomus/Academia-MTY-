@@ -3,6 +3,9 @@ package com.esteban.ligamxmongodb.model;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Document(collection = "teams")
 public class Team {
 
@@ -13,6 +16,7 @@ public class Team {
     private String city;
     private String stadium;
     private Integer foundingYear;
+    private List<Player> players = new ArrayList<>();
 
     public Team() {
     }
@@ -58,5 +62,13 @@ public class Team {
 
     public void setFoundingYear(Integer foundingYear) {
         this.foundingYear = foundingYear;
+    }
+
+    public List<Player> getPlayers() {
+        return players;
+    }
+
+    public void addPlayer(Player player) {
+        players.add(player);
     }
 }
