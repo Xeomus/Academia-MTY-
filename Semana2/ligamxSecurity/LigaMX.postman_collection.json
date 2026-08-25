@@ -1,0 +1,159 @@
+{
+  "info": {
+    "_postman_id": "bb0eb280-f1f2-4c4c-9cd6-62fa0d30cd35",
+    "name": "Liga MX API - Spring Security",
+    "description": "Pruebas con HTTP Basic para ADMIN y VIEWER.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    { "key": "baseUrl", "value": "http://localhost:8080", "type": "string" },
+    { "key": "teamId", "value": "1", "type": "string" },
+    { "key": "playerId", "value": "1", "type": "string" },
+    { "key": "adminUsername", "value": "admin", "type": "string" },
+    { "key": "adminPassword", "value": "admin123", "type": "string" },
+    { "key": "viewerUsername", "value": "viewer", "type": "string" },
+    { "key": "viewerPassword", "value": "viewer123", "type": "string" }
+  ],
+  "item": [
+    {
+      "name": "ADMIN - Todos los permisos",
+      "auth": {
+        "type": "basic",
+        "basic": [
+          { "key": "username", "value": "{{adminUsername}}", "type": "string" },
+          { "key": "password", "value": "{{adminPassword}}", "type": "string" }
+        ]
+      },
+      "item": [
+        {
+          "name": "Teams",
+          "item": [
+            { "name": "Listar equipos - 200", "request": { "method": "GET", "header": [], "url": "{{baseUrl}}/api/teams" }, "response": [] },
+            { "name": "Obtener equipo por ID - 200/404", "request": { "method": "GET", "header": [], "url": "{{baseUrl}}/api/teams/{{teamId}}" }, "response": [] },
+            {
+              "name": "Crear equipo - 200",
+              "request": {
+                "method": "POST",
+                "header": [{ "key": "Content-Type", "value": "application/json" }],
+                "body": { "mode": "raw", "raw": "{\n  \"name\": \"Tigres UANL\",\n  \"city\": \"San Nicolas de los Garza\",\n  \"stadium\": \"Estadio Universitario\",\n  \"foundingYear\": 1960\n}", "options": { "raw": { "language": "json" } } },
+                "url": "{{baseUrl}}/api/teams"
+              },
+              "response": []
+            },
+            {
+              "name": "Actualizar equipo - 200/404",
+              "request": {
+                "method": "PUT",
+                "header": [{ "key": "Content-Type", "value": "application/json" }],
+                "body": { "mode": "raw", "raw": "{\n  \"name\": \"Tigres UANL Actualizado\",\n  \"city\": \"San Nicolas de los Garza\",\n  \"stadium\": \"Estadio Universitario\",\n  \"foundingYear\": 1960\n}", "options": { "raw": { "language": "json" } } },
+                "url": "{{baseUrl}}/api/teams/{{teamId}}"
+              },
+              "response": []
+            },
+            { "name": "Eliminar equipo - 200", "request": { "method": "DELETE", "header": [], "url": "{{baseUrl}}/api/teams/{{teamId}}" }, "response": [] }
+          ]
+        },
+        {
+          "name": "Players",
+          "item": [
+            { "name": "Listar jugadores - 200", "request": { "method": "GET", "header": [], "url": "{{baseUrl}}/api/players" }, "response": [] },
+            { "name": "Obtener jugador por ID - 200/404", "request": { "method": "GET", "header": [], "url": "{{baseUrl}}/api/players/{{playerId}}" }, "response": [] },
+            { "name": "Listar jugadores por equipo - 200", "request": { "method": "GET", "header": [], "url": "{{baseUrl}}/api/teams/{{teamId}}/players" }, "response": [] },
+            {
+              "name": "Crear jugador en equipo - 200/404",
+              "request": {
+                "method": "POST",
+                "header": [{ "key": "Content-Type", "value": "application/json" }],
+                "body": { "mode": "raw", "raw": "{\n  \"name\": \"Andre-Pierre Gignac\",\n  \"number\": 10,\n  \"position\": \"Delantero\",\n  \"nationality\": \"Francesa\"\n}", "options": { "raw": { "language": "json" } } },
+                "url": "{{baseUrl}}/api/teams/{{teamId}}/players"
+              },
+              "response": []
+            },
+            {
+              "name": "Actualizar jugador - 200/404",
+              "request": {
+                "method": "PUT",
+                "header": [{ "key": "Content-Type", "value": "application/json" }],
+                "body": { "mode": "raw", "raw": "{\n  \"name\": \"Andre-Pierre Gignac\",\n  \"number\": 10,\n  \"position\": \"Delantero centro\",\n  \"nationality\": \"Francesa\"\n}", "options": { "raw": { "language": "json" } } },
+                "url": "{{baseUrl}}/api/players/{{playerId}}"
+              },
+              "response": []
+            },
+            { "name": "Eliminar jugador - 204/404", "request": { "method": "DELETE", "header": [], "url": "{{baseUrl}}/api/players/{{playerId}}" }, "response": [] }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "VIEWER - Permitido",
+      "auth": {
+        "type": "basic",
+        "basic": [
+          { "key": "username", "value": "{{viewerUsername}}", "type": "string" },
+          { "key": "password", "value": "{{viewerPassword}}", "type": "string" }
+        ]
+      },
+      "item": [
+        { "name": "Listar equipos - 200", "request": { "method": "GET", "header": [], "url": "{{baseUrl}}/api/teams" }, "response": [] },
+        { "name": "Obtener equipo por ID - 200/404", "request": { "method": "GET", "header": [], "url": "{{baseUrl}}/api/teams/{{teamId}}" }, "response": [] },
+        { "name": "Listar jugadores - 200", "request": { "method": "GET", "header": [], "url": "{{baseUrl}}/api/players" }, "response": [] },
+        { "name": "Obtener jugador por ID - 200/404", "request": { "method": "GET", "header": [], "url": "{{baseUrl}}/api/players/{{playerId}}" }, "response": [] },
+        { "name": "Listar jugadores por equipo - 200", "request": { "method": "GET", "header": [], "url": "{{baseUrl}}/api/teams/{{teamId}}/players" }, "response": [] }
+      ]
+    },
+    {
+      "name": "VIEWER - Rechazado (403 Forbidden)",
+      "auth": {
+        "type": "basic",
+        "basic": [
+          { "key": "username", "value": "{{viewerUsername}}", "type": "string" },
+          { "key": "password", "value": "{{viewerPassword}}", "type": "string" }
+        ]
+      },
+      "item": [
+        {
+          "name": "Crear equipo - 403 Forbidden",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"name\": \"Equipo rechazado\",\n  \"city\": \"Monterrey\",\n  \"stadium\": \"Estadio de prueba\",\n  \"foundingYear\": 2000\n}", "options": { "raw": { "language": "json" } } },
+            "url": "{{baseUrl}}/api/teams"
+          },
+          "response": []
+        },
+        {
+          "name": "Actualizar equipo - 403 Forbidden",
+          "request": {
+            "method": "PUT",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"name\": \"Equipo rechazado\",\n  \"city\": \"Monterrey\",\n  \"stadium\": \"Estadio de prueba\",\n  \"foundingYear\": 2000\n}", "options": { "raw": { "language": "json" } } },
+            "url": "{{baseUrl}}/api/teams/{{teamId}}"
+          },
+          "response": []
+        },
+        { "name": "Eliminar equipo - 403 Forbidden", "request": { "method": "DELETE", "header": [], "url": "{{baseUrl}}/api/teams/{{teamId}}" }, "response": [] },
+        {
+          "name": "Crear jugador - 403 Forbidden",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"name\": \"Jugador rechazado\",\n  \"number\": 10,\n  \"position\": \"Delantero\",\n  \"nationality\": \"Mexicana\"\n}", "options": { "raw": { "language": "json" } } },
+            "url": "{{baseUrl}}/api/teams/{{teamId}}/players"
+          },
+          "response": []
+        },
+        {
+          "name": "Actualizar jugador - 403 Forbidden",
+          "request": {
+            "method": "PUT",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"name\": \"Jugador rechazado\",\n  \"number\": 10,\n  \"position\": \"Delantero\",\n  \"nationality\": \"Mexicana\"\n}", "options": { "raw": { "language": "json" } } },
+            "url": "{{baseUrl}}/api/players/{{playerId}}"
+          },
+          "response": []
+        },
+        { "name": "Eliminar jugador - 403 Forbidden", "request": { "method": "DELETE", "header": [], "url": "{{baseUrl}}/api/players/{{playerId}}" }, "response": [] }
+      ]
+    }
+  ]
+}
