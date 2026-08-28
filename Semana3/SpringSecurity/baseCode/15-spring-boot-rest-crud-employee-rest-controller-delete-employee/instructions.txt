@@ -1,0 +1,44 @@
+Instalar Imagen Mysql9.7 y inicia Contendor
+docker run --name mysql-9.7 -e MYSQL_ROOT_PASSWORD=admin -p 3306:3306 -d mysql:9.7
+
+
+//INSTALAR EL PROGRAMA PARA CONECTARSE A MySql 
+
+a) WorkBeanch Mysql directamente en su PC
+b) Dbeaver 
+c) docker run --name cliente-mysql -d -e PMA_HOST=host.docker.internal -p 8000:80 phpmyadmin
+d) Mysql trae CLI mysql
+
+//EJECTUAR LOS SCRIPTS
+//PRIMER SCRIPT
+
+-- Drop user first if they exist
+DROP USER if exists 'springstudent'@'%' ;
+
+-- Now create user with prop privileges
+CREATE USER 'springstudent'@'%' IDENTIFIED BY 'springstudent';
+
+GRANT ALL PRIVILEGES ON * . * TO 'springstudent'@'%';
+
+//SEGUNDO SCRIPT 
+
+CREATE DATABASE  IF NOT EXISTS `employee_directory`;
+USE `employee_directory`;
+
+DROP TABLE IF EXISTS `employee`;
+
+CREATE TABLE `employee` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `first_name`varchar(45) DEFAULT NULL,
+  `last_name` varchar(45) DEFAULT NULL,
+  `email` varchar(45) DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=latin1;
+
+//INSERT Table Employee
+
+//INSTALAR JAVA VERSION MINIMO 21
+
+http://localhost:8080/api/employees
+
+
