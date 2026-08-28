@@ -1,8 +1,8 @@
 {
   "info": {
     "_postman_id": "bb0eb280-f1f2-4c4c-9cd6-62fa0d30cd35",
-    "name": "Liga MX API - Spring Security",
-    "description": "Pruebas con HTTP Basic para ADMIN y VIEWER.",
+    "name": "Liga MX API - Spring Security JWT",
+    "description": "Pruebas con JWT para ADMIN y VIEWER. Ejecuta primero el login del usuario correspondiente; el token se guarda automáticamente en las variables de la colección.",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
   },
   "variable": [
@@ -12,16 +12,88 @@
     { "key": "adminUsername", "value": "admin", "type": "string" },
     { "key": "adminPassword", "value": "admin123", "type": "string" },
     { "key": "viewerUsername", "value": "viewer", "type": "string" },
-    { "key": "viewerPassword", "value": "viewer123", "type": "string" }
+    { "key": "viewerPassword", "value": "viewer123", "type": "string" },
+    { "key": "adminToken", "value": "", "type": "string" },
+    { "key": "viewerToken", "value": "", "type": "string" }
   ],
   "item": [
     {
+      "name": "Autenticacion JWT - Ejecutar primero",
+      "item": [
+        {
+          "name": "Login ADMIN - Guardar token",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Login ADMIN exitoso\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "const response = pm.response.json();",
+                  "pm.test(\"La respuesta contiene un token\", function () {",
+                  "    pm.expect(response.token).to.be.a(\"string\").and.not.empty;",
+                  "});",
+                  "pm.collectionVariables.set(\"adminToken\", response.token);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "auth": { "type": "noauth" },
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"{{adminUsername}}\",\n  \"password\": \"{{adminPassword}}\"\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": "{{baseUrl}}/api/auth/login"
+          },
+          "response": []
+        },
+        {
+          "name": "Login VIEWER - Guardar token",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Login VIEWER exitoso\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "const response = pm.response.json();",
+                  "pm.test(\"La respuesta contiene un token\", function () {",
+                  "    pm.expect(response.token).to.be.a(\"string\").and.not.empty;",
+                  "});",
+                  "pm.collectionVariables.set(\"viewerToken\", response.token);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "auth": { "type": "noauth" },
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"{{viewerUsername}}\",\n  \"password\": \"{{viewerPassword}}\"\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": "{{baseUrl}}/api/auth/login"
+          },
+          "response": []
+        }
+      ]
+    },
+    {
       "name": "ADMIN - Todos los permisos",
       "auth": {
-        "type": "basic",
-        "basic": [
-          { "key": "username", "value": "{{adminUsername}}", "type": "string" },
-          { "key": "password", "value": "{{adminPassword}}", "type": "string" }
+        "type": "bearer",
+        "bearer": [
+          { "key": "token", "value": "{{adminToken}}", "type": "string" }
         ]
       },
       "item": [
@@ -87,10 +159,9 @@
     {
       "name": "VIEWER - Permitido",
       "auth": {
-        "type": "basic",
-        "basic": [
-          { "key": "username", "value": "{{viewerUsername}}", "type": "string" },
-          { "key": "password", "value": "{{viewerPassword}}", "type": "string" }
+        "type": "bearer",
+        "bearer": [
+          { "key": "token", "value": "{{viewerToken}}", "type": "string" }
         ]
       },
       "item": [
@@ -104,10 +175,9 @@
     {
       "name": "VIEWER - Rechazado (403 Forbidden)",
       "auth": {
-        "type": "basic",
-        "basic": [
-          { "key": "username", "value": "{{viewerUsername}}", "type": "string" },
-          { "key": "password", "value": "{{viewerPassword}}", "type": "string" }
+        "type": "bearer",
+        "bearer": [
+          { "key": "token", "value": "{{viewerToken}}", "type": "string" }
         ]
       },
       "item": [
