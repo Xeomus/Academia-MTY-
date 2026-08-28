@@ -112,7 +112,17 @@ Ejemplo para crear o actualizar un jugador:
 
 ## Seguridad y pruebas con Postman
 
-La API usa Spring Security con autenticación HTTP Basic. `ADMIN` puede consultar y modificar datos; `VIEWER` solo puede consultarlos.
+La API utiliza Spring Security con autenticación mediante `JWT` (JSON Web Token). 
+El rol `ADMIN` tiene permisos para consultar y modificar los datos, mientras que el rol 
+`VIEWER` únicamente tiene permisos de consulta.
+
+A diferencia del proyecto anterior, donde utilizamos `HTTP Basic` y es necesario enviar las credenciales del usuario en cada petición, 
+con `JWT` el usuario se autentica inicialmente enviando sus credenciales al endpoint de inicio de sesión.
+
+Si las credenciales son correctas, la API genera un token `JWT`. 
+A partir de ese momento, no es necesario volver a enviar el usuario y la contraseña en cada petición. 
+En su lugar, el token generado se incluye en las siguientes solicitudes para identificar al usuario 
+y validar que tenga los permisos necesarios para acceder al recurso solicitado.
 
 | Usuario | Contraseña | Permisos |
 | ------- | ---------- | -------- |
