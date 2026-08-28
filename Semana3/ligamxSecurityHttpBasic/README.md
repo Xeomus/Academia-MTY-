@@ -1,127 +1,139 @@
-# Liga MX API
+# PROYECTO 01 — HTTP Basic
 
-API REST para administrar equipos y jugadores de la Liga MX. El proyecto utiliza Spring Boot, Spring Data JPA, validación Jakarta y MySQL.
+## 6. Objetivo
 
-## Requisitos
+Este proyecto utiliza HTTP Basic con roles.
 
-- Java 21
-- MySQL
-- No es necesario instalar Gradle: el repositorio incluye Gradle Wrapper.
-- Postman, opcional, para importar y ejecutar la colección incluida.
+Usuarios:
 
-## Configuración de la base de datos
+| Usuario | Password  | Roles                                         |
+| ------- | --------- | --------------------------------------------- |
+| `john`  | `test123` | `ROLE_EMPLOYEE`                               |
+| `mary`  | `test123` | `ROLE_EMPLOYEE`, `ROLE_MANAGER`               |
+| `susan` | `test123` | `ROLE_EMPLOYEE`, `ROLE_MANAGER`, `ROLE_ADMIN` |
 
-1. Crea una base de datos llamada `ligamx`:
+Permisos esperados:
 
-```sql
-CREATE DATABASE ligamx;
+| Usuario | GET |      POST |       PUT |    DELETE |
+| ------- | --: | --------: | --------: | --------: |
+| john    | 200 |       403 |       403 |       403 |
+| mary    | 200 | permitido | permitido |       403 |
+| susan   | 200 | permitido | permitido | permitido |
+
+Puerto:
+
+```text
+8071
 ```
 
-2. Abre `src/main/resources/application.properties` y agrega tu usuario y contraseña de MySQL:
+---
 
-```properties
-spring.datasource.username=TU_USUARIO
-spring.datasource.password=TU_CONTRASENA
-```
+## 7. Arrancar `01-security-basic`
 
-La URL ya apunta a `jdbc:mysql://localhost:3306/ligamx`. Hibernate crea o actualiza las tablas automáticamente mediante `spring.jpa.hibernate.ddl-auto=update`.
+Desde la carpeta del proyecto.
 
-## Ejecutar el proyecto
-
-En Windows:
+Maven:
 
 ```powershell
-.\gradlew.bat bootRun
+.\mvnw spring-boot:run
 ```
 
-En Linux o macOS:
+Gradle:
 
-```bash
-./gradlew bootRun
+```powershell
+.\gradlew bootRun
 ```
 
-La API queda disponible en `http://localhost:8080`.
+---
 
-## Modelo de datos
+## 8. Probar HTTP Basic desde PowerShell
 
-### Equipo
+### Sin credenciales
 
-| Campo          | Tipo    | Validación                        |
-| -------------- | ------- | --------------------------------- |
-| `id`           | Long    | Generado automáticamente          |
-| `name`         | String  | Obligatorio, no puede estar vacío |
-| `city`         | String  | Obligatorio, no puede estar vacío |
-| `stadium`      | String  | Obligatorio, no puede estar vacío |
-| `foundingYear` | Integer | Mínimo 1800                       |
-| `players`      | Array   | Jugadores asociados al equipo     |
-
-### Jugador
-
-| Campo         | Tipo    | Validación                        |
-| ------------- | ------- | --------------------------------- |
-| `id`          | Long    | Generado automáticamente          |
-| `name`        | String  | Obligatorio, no puede estar vacío |
-| `number`      | Integer | Obligatorio, entre 1 y 99         |
-| `position`    | String  | Obligatorio, no puede estar vacío |
-| `nationality` | String  | Obligatorio, no puede estar vacío |
-
-## Endpoints
-
-### Equipos
-
-| Método | Ruta              | Descripción              | Respuesta esperada                            |
-| ------ | ----------------- | ------------------------ | --------------------------------------------- |
-| GET    | `/api/teams`      | Lista todos los equipos  | `200 OK`                                      |
-| GET    | `/api/teams/{id}` | Obtiene un equipo por ID | `200 OK` o `404 Not Found`                    |
-| POST   | `/api/teams`      | Crea un equipo           | `200 OK` o `400 Bad Request`                  |
-| PUT    | `/api/teams/{id}` | Actualiza un equipo      | `200 OK`, `400 Bad Request` o `404 Not Found` |
-| DELETE | `/api/teams/{id}` | Elimina un equipo        | `200 OK`                                      |
-
-Ejemplo para crear o actualizar un equipo:
-
-```json
-{
-  "name": "Tigres UANL",
-  "city": "San Nicolas de los Garza",
-  "stadium": "Estadio Universitario",
-  "foundingYear": 1960
-}
+```powershell
+curl.exe -i http://localhost:8071/api/employees
 ```
 
-### Jugadores
+Esperado:
 
-| Método | Ruta                          | Descripción                      | Respuesta esperada                            |
-| ------ | ----------------------------- | -------------------------------- | --------------------------------------------- |
-| GET    | `/api/players`                | Lista todos los jugadores        | `200 OK`                                      |
-| GET    | `/api/players/{id}`           | Obtiene un jugador por ID        | `200 OK` o `404 Not Found`                    |
-| GET    | `/api/teams/{teamId}/players` | Lista los jugadores de un equipo | `200 OK`                                      |
-| POST   | `/api/teams/{teamId}/players` | Crea un jugador en un equipo     | `200 OK`, `400 Bad Request` o `404 Not Found` |
-| PUT    | `/api/players/{id}`           | Actualiza un jugador             | `200 OK`, `400 Bad Request` o `404 Not Found` |
-| DELETE | `/api/players/{id}`           | Elimina un jugador               | `204 No Content` o `404 Not Found`            |
-
-Ejemplo para crear o actualizar un jugador:
-
-```json
-{
-  "name": "Andre-Pierre Gignac",
-  "number": 10,
-  "position": "Delantero",
-  "nationality": "Francesa"
-}
+```text
+401 Unauthorized
 ```
 
-## Seguridad y pruebas con Postman
+### Credenciales incorrectas
 
-La API usa Spring Security con autenticación HTTP Basic. `ADMIN` puede consultar y modificar datos; `VIEWER` solo puede consultarlos.
+```powershell
+curl.exe -i -u john:MALA http://localhost:8071/api/employees
+```
 
-| Usuario | Contraseña | Permisos |
-| ------- | ---------- | -------- |
-| `admin` | `admin123` | Lectura y escritura |
-| `viewer` | `viewer123` | Solo lectura |
+Esperado:
 
-1. Inicia MySQL y ejecuta la aplicación.
-2. Importa `LigaMX.postman_collection.json` en Postman.
-3. Ejecuta **ADMIN / Crear equipo** y copia el `id` de la respuesta en la variable `teamId` de la colección.
-4. Ejecuta **ADMIN / Crear jugador en equipo** y copia el `id` de la respuesta en `playerId`.
-5. Ejecuta las carpetas **VIEWER - Permitido** y **VIEWER - Rechazado (403 Forbidden)**.
+```text
+401 Unauthorized
+```
 
+### John puede leer
+
+```powershell
+curl.exe -i -u john:test123 http://localhost:8071/api/employees
+```
+
+Esperado:
+
+```text
+200 OK
+```
+
+### John no puede crear
+
+```powershell
+curl.exe -i -u john:test123 `
+  -X POST http://localhost:8071/api/employees `
+  -H "Content-Type: application/json" `
+  -d '{\"firstName\":\"X\",\"lastName\":\"Y\",\"email\":\"x@y.com\"}'
+```
+
+Esperado:
+
+```text
+403 Forbidden
+```
+
+### Mary puede crear
+
+```powershell
+curl.exe -i -u mary:test123 `
+  -X POST http://localhost:8071/api/employees `
+  -H "Content-Type: application/json" `
+  -d '{\"firstName\":\"Temp\",\"lastName\":\"Basic\",\"email\":\"temp@basic.com\"}'
+```
+
+Guarda el ID que regrese.
+
+### Mary no puede borrar
+
+```powershell
+curl.exe -i -u mary:test123 `
+  -X DELETE http://localhost:8071/api/employees/ID
+```
+
+Esperado:
+
+```text
+403 Forbidden
+```
+
+### Susan puede borrar
+
+```powershell
+curl.exe -i -u susan:test123 `
+  -X DELETE http://localhost:8071/api/employees/ID
+```
+
+Esperado:
+
+```text
+200 OK
+```
+
+---
