@@ -1,0 +1,1041 @@
+<meta charset="utf-8">
+<title>Employee API con curl</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500;700&family=Zilla+Slab:wght@600;700&display=swap">
+
+<style>
+:root{
+  --bg:#f4f6f8;
+  --surface:#ffffff;
+  --surface-2:#eef1f5;
+  --ink:#12161c;
+  --ink-2:#4d5866;
+  --ink-3:#77828f;
+  --rule:#dce2ea;
+  --accent:#23456e;
+  --accent-soft:#e4ecf6;
+
+  --term-bg:#12161c;
+  --term-ink:#dbe2ea;
+  --term-dim:#7c8899;
+  --term-prompt:#5f9ea0;
+  --term-out:#a8b3c0;
+  --term-rule:#2a323d;
+
+  --get:#1f5b96;
+  --post:#2b6f47;
+  --put:#8f5a12;
+  --patch:#186b6b;
+  --delete:#a33636;
+
+  --get-bg:#e3edf8;
+  --post-bg:#e2f0e7;
+  --put-bg:#f7ecdb;
+  --patch-bg:#ddf0ef;
+  --delete-bg:#f8e5e4;
+
+  --step:clamp(1.9rem,1.4rem + 1.6vw,2.6rem);
+  --h2:clamp(1.45rem,1.2rem + 1vw,1.9rem);
+  --h3:1.1rem;
+  --body:1rem;
+  --small:.86rem;
+  --tiny:.76rem;
+  --radius:10px;
+  --maxw:1180px;
+}
+
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --bg:#0e1116;
+    --surface:#161a21;
+    --surface-2:#1c222b;
+    --ink:#e7ecf2;
+    --ink-2:#a2adbb;
+    --ink-3:#7b8694;
+    --rule:#262d38;
+    --accent:#89b0e0;
+    --accent-soft:#1a2531;
+
+    --term-bg:#080a0e;
+    --term-ink:#dbe2ea;
+    --term-dim:#6d7887;
+    --term-prompt:#6fb3b5;
+    --term-out:#98a4b2;
+    --term-rule:#222932;
+
+    --get:#7fb0e8;
+    --post:#74c294;
+    --put:#dfa955;
+    --patch:#5fc0bd;
+    --delete:#e8908b;
+
+    --get-bg:#16243a;
+    --post-bg:#152a1f;
+    --put-bg:#2e2312;
+    --patch-bg:#12292a;
+    --delete-bg:#2f1a1a;
+  }
+}
+
+:root[data-theme="dark"]{
+  --bg:#0e1116;
+  --surface:#161a21;
+  --surface-2:#1c222b;
+  --ink:#e7ecf2;
+  --ink-2:#a2adbb;
+  --ink-3:#7b8694;
+  --rule:#262d38;
+  --accent:#89b0e0;
+  --accent-soft:#1a2531;
+
+  --term-bg:#080a0e;
+  --term-ink:#dbe2ea;
+  --term-dim:#6d7887;
+  --term-prompt:#6fb3b5;
+  --term-out:#98a4b2;
+  --term-rule:#222932;
+
+  --get:#7fb0e8;
+  --post:#74c294;
+  --put:#dfa955;
+  --patch:#5fc0bd;
+  --delete:#e8908b;
+
+  --get-bg:#16243a;
+  --post-bg:#152a1f;
+  --put-bg:#2e2312;
+  --patch-bg:#12292a;
+  --delete-bg:#2f1a1a;
+}
+
+*{box-sizing:border-box}
+
+body{
+  margin:0;
+  background:var(--bg);
+  color:var(--ink);
+  font-family:"IBM Plex Sans",-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+  font-size:var(--body);
+  line-height:1.62;
+  -webkit-font-smoothing:antialiased;
+}
+
+html{scroll-behavior:smooth}
+@media (prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto}
+  *{animation-duration:.01ms !important;transition-duration:.01ms !important}
+}
+
+a{color:var(--accent);text-decoration-thickness:1px;text-underline-offset:2px}
+a:focus-visible,button:focus-visible,summary:focus-visible{
+  outline:2px solid var(--accent);outline-offset:2px;border-radius:3px;
+}
+
+code,kbd,pre,.mono{font-family:"JetBrains Mono",ui-monospace,SFMono-Regular,Menlo,monospace}
+
+/* ---------- shell ---------- */
+
+.wrap{max-width:var(--maxw);margin:0 auto;padding:0 clamp(1rem,3vw,2.5rem)}
+
+.masthead{
+  border-bottom:1px solid var(--rule);
+  background:var(--surface);
+}
+.masthead .wrap{
+  padding-top:clamp(2.4rem,5vw,4rem);
+  padding-bottom:clamp(1.8rem,4vw,2.8rem);
+  display:flex;flex-direction:column;gap:1.1rem;
+}
+.eyebrow{
+  font-family:"JetBrains Mono",monospace;
+  font-size:var(--tiny);
+  letter-spacing:.13em;
+  text-transform:uppercase;
+  color:var(--ink-3);
+  margin:0;
+}
+h1{
+  font-family:"Zilla Slab",Georgia,serif;
+  font-weight:700;
+  font-size:clamp(2.3rem,1.6rem + 3vw,3.6rem);
+  line-height:1.06;
+  letter-spacing:-.015em;
+  margin:0;
+  text-wrap:balance;
+}
+.lede{
+  margin:0;
+  max-width:60ch;
+  font-size:clamp(1.02rem,.98rem + .3vw,1.16rem);
+  color:var(--ink-2);
+}
+.facts{
+  display:flex;flex-wrap:wrap;gap:.5rem .45rem;
+  margin-top:.3rem;padding:0;list-style:none;
+}
+.facts li{
+  font-family:"JetBrains Mono",monospace;
+  font-size:var(--tiny);
+  color:var(--ink-2);
+  background:var(--surface-2);
+  border:1px solid var(--rule);
+  border-radius:99px;
+  padding:.2rem .62rem;
+}
+
+/* ---------- layout ---------- */
+
+.shell{
+  display:grid;
+  grid-template-columns:210px minmax(0,1fr);
+  gap:clamp(1.5rem,4vw,3.5rem);
+  padding-top:clamp(1.6rem,3vw,2.6rem);
+  padding-bottom:4rem;
+  align-items:start;
+}
+@media (max-width:900px){
+  .shell{grid-template-columns:minmax(0,1fr);gap:1.6rem}
+}
+
+/* ---------- nav ---------- */
+
+nav.toc{position:sticky;top:1.5rem}
+@media (max-width:900px){
+  nav.toc{position:static;background:var(--surface);border:1px solid var(--rule);border-radius:var(--radius);padding:1rem 1.1rem}
+}
+.toc h2{
+  font-family:"JetBrains Mono",monospace;
+  font-size:var(--tiny);letter-spacing:.13em;text-transform:uppercase;
+  color:var(--ink-3);margin:0 0 .7rem;font-weight:500;
+}
+.toc ol,.toc ul{list-style:none;margin:0 0 1.3rem;padding:0;display:flex;flex-direction:column;gap:.08rem}
+.toc a{
+  display:flex;gap:.55rem;align-items:baseline;
+  padding:.26rem .45rem;margin-left:-.45rem;
+  border-radius:5px;
+  text-decoration:none;
+  color:var(--ink-2);
+  font-size:.87rem;line-height:1.35;
+  transition:background .15s,color .15s;
+}
+.toc a:hover{background:var(--surface-2);color:var(--ink)}
+.toc a.on{background:var(--accent-soft);color:var(--accent);font-weight:600}
+.toc .n{
+  font-family:"JetBrains Mono",monospace;font-size:.72rem;
+  color:var(--ink-3);flex:none;
+}
+.toc a.on .n{color:var(--accent)}
+
+/* ---------- sections ---------- */
+
+section{scroll-margin-top:1.5rem;margin-bottom:3.2rem}
+.rubric{
+  font-family:"JetBrains Mono",monospace;
+  font-size:var(--tiny);letter-spacing:.13em;text-transform:uppercase;
+  color:var(--ink-3);
+  display:flex;align-items:center;gap:.7rem;
+  margin:0 0 1.4rem;
+}
+.rubric::after{content:"";flex:1;height:1px;background:var(--rule)}
+
+h2.sec{
+  font-family:"Zilla Slab",Georgia,serif;
+  font-weight:600;font-size:var(--h2);line-height:1.15;
+  margin:0 0 .5rem;letter-spacing:-.01em;text-wrap:balance;
+  display:flex;gap:.7rem;align-items:baseline;
+}
+h2.sec .num{
+  font-family:"JetBrains Mono",monospace;
+  font-size:.8em;color:var(--ink-3);font-weight:400;flex:none;
+}
+h3{
+  font-family:"IBM Plex Sans",sans-serif;
+  font-weight:600;font-size:var(--h3);
+  margin:1.9rem 0 .5rem;line-height:1.3;text-wrap:balance;
+}
+p{margin:0 0 .9rem;max-width:68ch}
+ul.prose,ol.prose{margin:0 0 1rem;padding-left:1.2rem;max-width:66ch}
+ul.prose li,ol.prose li{margin-bottom:.4rem}
+strong{font-weight:600}
+p code,li code,td code,.tag{
+  font-size:.87em;
+  background:var(--surface-2);
+  border:1px solid var(--rule);
+  border-radius:4px;
+  padding:.08em .34em;
+  word-break:break-word;
+}
+
+/* ---------- terminal ---------- */
+
+.term{
+  position:relative;
+  background:var(--term-bg);
+  border:1px solid var(--term-rule);
+  border-radius:var(--radius);
+  margin:0 0 1.1rem;
+  overflow:hidden;
+}
+.term pre{
+  margin:0;
+  padding:1rem 1.1rem;
+  overflow-x:auto;
+  font-size:.83rem;
+  line-height:1.72;
+  color:var(--term-ink);
+  tab-size:2;
+}
+.term .p{color:var(--term-prompt);user-select:none}
+.term .cmd{color:var(--term-ink)}
+.term .out{color:var(--term-out)}
+.term .cm{color:var(--term-dim);font-style:italic}
+.term .ok{color:#74c294}
+.term .bad{color:#e8908b}
+.copy{
+  position:absolute;top:.55rem;right:.55rem;
+  font-family:"JetBrains Mono",monospace;font-size:.68rem;
+  letter-spacing:.06em;text-transform:uppercase;
+  color:var(--term-dim);
+  background:transparent;
+  border:1px solid var(--term-rule);
+  border-radius:5px;
+  padding:.24rem .55rem;
+  cursor:pointer;
+  transition:color .15s,border-color .15s,background .15s;
+}
+.copy:hover{color:var(--term-ink);border-color:var(--term-dim);background:rgba(255,255,255,.05)}
+
+/* ---------- endpoint cards ---------- */
+
+.ep{
+  background:var(--surface);
+  border:1px solid var(--rule);
+  border-radius:var(--radius);
+  padding:1.2rem 1.3rem 1.1rem;
+  margin-bottom:1.3rem;
+}
+.ep-head{display:flex;flex-wrap:wrap;align-items:center;gap:.6rem;margin-bottom:.7rem}
+.verb{
+  font-family:"JetBrains Mono",monospace;
+  font-size:.7rem;font-weight:700;letter-spacing:.1em;
+  padding:.24rem .55rem;border-radius:5px;flex:none;
+}
+.verb.get{color:var(--get);background:var(--get-bg)}
+.verb.post{color:var(--post);background:var(--post-bg)}
+.verb.put{color:var(--put);background:var(--put-bg)}
+.verb.patch{color:var(--patch);background:var(--patch-bg)}
+.verb.delete{color:var(--delete);background:var(--delete-bg)}
+.path{font-family:"JetBrains Mono",monospace;font-size:.9rem;font-weight:500;word-break:break-all}
+.src{
+  font-family:"JetBrains Mono",monospace;font-size:var(--tiny);
+  color:var(--ink-3);margin-left:auto;flex:none;
+}
+.ep p{margin-bottom:.85rem}
+.ep p:last-child{margin-bottom:0}
+
+.note{
+  border-left:2px solid var(--accent);
+  padding:.15rem 0 .15rem .85rem;
+  margin:.9rem 0 0;
+  font-size:var(--small);
+  color:var(--ink-2);
+  max-width:66ch;
+}
+.note strong{color:var(--ink)}
+.note.warn{border-left-color:var(--put)}
+.note.warn strong{color:var(--put)}
+
+/* ---------- tables ---------- */
+
+.tw{overflow-x:auto;margin:0 0 1.2rem;border:1px solid var(--rule);border-radius:var(--radius);background:var(--surface)}
+table{border-collapse:collapse;width:100%;font-size:var(--small);min-width:520px}
+th,td{text-align:left;padding:.62rem .85rem;border-bottom:1px solid var(--rule);vertical-align:top}
+tbody tr:last-child td{border-bottom:none}
+th{
+  font-family:"JetBrains Mono",monospace;
+  font-size:var(--tiny);letter-spacing:.08em;text-transform:uppercase;
+  color:var(--ink-3);font-weight:500;
+  background:var(--surface-2);
+  white-space:nowrap;
+}
+td:first-child{white-space:nowrap}
+td.wrap-ok:first-child{white-space:normal}
+.num-col{font-variant-numeric:tabular-nums}
+
+/* ---------- checklist ---------- */
+
+.check{list-style:none;margin:0 0 1.2rem;padding:0;display:flex;flex-direction:column;gap:.55rem}
+.check li{
+  display:grid;grid-template-columns:auto minmax(0,1fr);gap:.7rem;align-items:baseline;
+  background:var(--surface);border:1px solid var(--rule);border-radius:var(--radius);
+  padding:.7rem .9rem;font-size:var(--small);
+}
+.check .box{
+  font-family:"JetBrains Mono",monospace;color:var(--ink-3);font-size:.9em;flex:none;
+}
+.check b{font-weight:600;display:block;margin-bottom:.1rem;font-size:1rem}
+
+/* ---------- details ---------- */
+
+details{
+  background:var(--surface);border:1px solid var(--rule);border-radius:var(--radius);
+  padding:.75rem 1rem;margin:0 0 1.2rem;
+}
+details[open]{padding-bottom:1rem}
+summary{
+  cursor:pointer;font-weight:600;font-size:var(--small);
+  list-style:none;display:flex;align-items:center;gap:.5rem;
+}
+summary::-webkit-details-marker{display:none}
+summary::before{
+  content:"+";font-family:"JetBrains Mono",monospace;color:var(--ink-3);
+  font-weight:400;
+}
+details[open] summary::before{content:"\2212"}
+details > *:not(summary){margin-top:.9rem}
+
+/* ---------- footer ---------- */
+
+footer{
+  border-top:1px solid var(--rule);
+  background:var(--surface);
+  padding:1.8rem 0 2.4rem;
+}
+footer .wrap{
+  display:flex;flex-wrap:wrap;gap:.6rem 1.5rem;justify-content:space-between;
+  font-size:var(--tiny);color:var(--ink-3);
+  font-family:"JetBrains Mono",monospace;
+}
+</style>
+
+<header class="masthead">
+  <div class="wrap">
+    <p class="eyebrow">Spring Boot 4.1 &middot; Guía de laboratorio</p>
+    <h1>Employee API con curl</h1>
+    <p class="lede">Cinco verbos HTTP, seis rutas y ningún cliente gráfico. Vas a levantar la API de empleados, mandarle peticiones a mano desde la terminal y leer lo que responde — que es exactamente lo que hace Postman por debajo.</p>
+    <ul class="facts">
+      <li>~30 min</li>
+      <li>Java 21</li>
+      <li>MySQL 9.7 en Docker</li>
+      <li>localhost:8080</li>
+    </ul>
+  </div>
+</header>
+
+<div class="wrap shell">
+
+<nav class="toc" aria-label="Contenido">
+  <h2>La ruta</h2>
+  <ol>
+    <li><a href="#requisitos"><span class="n">01</span> Requisitos</a></li>
+    <li><a href="#arrancar"><span class="n">02</span> Arrancar la app</a></li>
+    <li><a href="#primera"><span class="n">03</span> Tu primera petición</a></li>
+    <li><a href="#anatomia"><span class="n">04</span> Anatomía de curl</a></li>
+    <li><a href="#endpoints"><span class="n">05</span> Las seis rutas</a></li>
+    <li><a href="#ciclo"><span class="n">06</span> El ciclo completo</a></li>
+  </ol>
+  <h2>Referencia</h2>
+  <ul>
+    <li><a href="#windows">Si usas Windows</a></li>
+    <li><a href="#rarezas">Rarezas del código</a></li>
+    <li><a href="#errores">Errores comunes</a></li>
+    <li><a href="#ejercicios">Ejercicios</a></li>
+  </ul>
+</nav>
+
+<main>
+
+<!-- ============ 1 ============ -->
+<section id="requisitos">
+  <p class="rubric">Paso uno</p>
+  <h2 class="sec"><span class="num">01</span> Requisitos</h2>
+  <p>Antes de mandar una sola petición, comprueba que tienes las cuatro piezas. Cada línea de abajo trae el comando que lo verifica: si alguno no responde lo que esperas, resuélvelo antes de seguir.</p>
+
+  <ul class="check">
+    <li><span class="box">[ ]</span><span><b>Java 21 o superior</b> <code>java -version</code> debe decir <code>21</code> o más. La app no arranca con 17.</span></li>
+    <li><span class="box">[ ]</span><span><b>Docker corriendo con MySQL</b> <code>docker ps</code> debe listar el contenedor <code>mysql-9.7</code> con estado <code>Up</code>.</span></li>
+    <li><span class="box">[ ]</span><span><b>curl instalado</b> <code>curl --version</code>. Ya viene de fábrica en macOS, Linux y Windows 10 en adelante.</span></li>
+    <li><span class="box">[ ]</span><span><b>jq</b> <em>(opcional pero muy recomendable)</em> <code>jq --version</code>. Formatea el JSON para que sea legible.</span></li>
+  </ul>
+
+  <h3>Si es la primera vez: levantar MySQL</h3>
+  <div class="term">
+    <button class="copy" type="button">Copiar</button>
+<pre><code><span class="cm"># crear el contenedor (solo la primera vez)</span>
+<span class="p">$</span> <span class="cmd">docker run --name mysql-9.7 -e MYSQL_ROOT_PASSWORD=admin -p 3306:3306 -d mysql:9.7</span>
+
+<span class="cm"># las siguientes veces basta con arrancarlo</span>
+<span class="p">$</span> <span class="cmd">docker start mysql-9.7</span></code></pre>
+  </div>
+
+  <details>
+    <summary>Scripts SQL: usuario y base de datos</summary>
+    <p>Ejecútalos con Workbench, DBeaver o el CLI de MySQL. Si ya los corriste en una sesión anterior, sáltate esto.</p>
+    <div class="term">
+      <button class="copy" type="button">Copiar</button>
+<pre><code><span class="cmd">DROP USER IF EXISTS 'springstudent'@'%';
+CREATE USER 'springstudent'@'%' IDENTIFIED BY 'springstudent';
+GRANT ALL PRIVILEGES ON *.* TO 'springstudent'@'%';
+
+CREATE DATABASE IF NOT EXISTS `employee_directory`;
+USE `employee_directory`;
+
+DROP TABLE IF EXISTS `employee`;
+CREATE TABLE `employee` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `first_name` varchar(45) DEFAULT NULL,
+  `last_name` varchar(45) DEFAULT NULL,
+  `email` varchar(45) DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=latin1;</span></code></pre>
+    </div>
+  </details>
+
+  <h3>Instalar jq</h3>
+  <div class="term">
+    <button class="copy" type="button">Copiar</button>
+<pre><code><span class="cm"># macOS</span>
+<span class="p">$</span> <span class="cmd">brew install jq</span>
+<span class="cm"># Ubuntu / Debian</span>
+<span class="p">$</span> <span class="cmd">sudo apt install jq</span>
+<span class="cm"># Windows</span>
+<span class="p">$</span> <span class="cmd">winget install jqlang.jq</span></code></pre>
+  </div>
+
+  <p class="note"><strong>¿No quieres instalar jq?</strong> No es obligatorio. Sin él, <code>curl</code> igual imprime el JSON, solo que todo en una línea. La alternativa sin instalar nada es <code>| python3 -m json.tool</code>.</p>
+</section>
+
+<!-- ============ 2 ============ -->
+<section id="arrancar">
+  <p class="rubric">Paso dos</p>
+  <h2 class="sec"><span class="num">02</span> Arrancar la aplicación</h2>
+  <p>Desde la carpeta del proyecto, elige una de las dos formas. La primera es la de todos los días; la segunda genera el <code>.jar</code> ejecutable, que es lo que entregarías a producción.</p>
+
+  <div class="term">
+    <button class="copy" type="button">Copiar</button>
+<pre><code><span class="cm"># opción A — desarrollo, recompila al vuelo</span>
+<span class="p">$</span> <span class="cmd">./mvnw spring-boot:run</span>
+
+<span class="cm"># opción B — empaquetar y ejecutar el jar</span>
+<span class="p">$</span> <span class="cmd">./mvnw clean package -DskipTests</span>
+<span class="p">$</span> <span class="cmd">java -jar target/cruddemo-0.0.1-SNAPSHOT.jar</span></code></pre>
+  </div>
+
+  <p>Sabes que arrancó bien cuando ves estas dos líneas al final del log:</p>
+
+  <div class="term">
+<pre><code><span class="out">Tomcat started on port 8080 (http) with context path '/'
+Started CruddemoApplication in 2.417 seconds</span></code></pre>
+  </div>
+
+  <p class="note"><strong>Abre una segunda terminal.</strong> La ventana donde corre la app se queda ocupada mostrando el log — no puedes escribir ahí. Todos los <code>curl</code> de esta guía van en una terminal nueva. Para detener la app: <kbd>Ctrl</kbd> + <kbd>C</kbd> en la primera.</p>
+</section>
+
+<!-- ============ 3 ============ -->
+<section id="primera">
+  <p class="rubric">Paso tres</p>
+  <h2 class="sec"><span class="num">03</span> Tu primera petición</h2>
+  <p>La prueba de vida. Si esto responde, el trío completo funciona: tu terminal habla con Tomcat, Tomcat con Spring y Spring con MySQL.</p>
+
+  <div class="term">
+    <button class="copy" type="button">Copiar</button>
+<pre><code><span class="p">$</span> <span class="cmd">curl -s http://localhost:8080/api/employees</span>
+<span class="out">[{"firstName":"Patrobas","lastName":"Filologo","email":"patrobas@gmail.com","id":1}]</span></code></pre>
+  </div>
+
+  <p>Si te salió <code>Connection refused</code>, la app no está arriba — vuelve al paso 2. Cualquier otro error está en la <a href="#errores">tabla de errores comunes</a>.</p>
+
+  <h3>De dónde sale esa URL</h3>
+  <p>No es arbitraria: cada tramo viene de un lugar concreto del código.</p>
+
+  <div class="tw">
+    <table>
+      <thead><tr><th>Tramo</th><th>Significado</th><th>Dónde se define</th></tr></thead>
+      <tbody>
+        <tr><td><code>http://</code></td><td>Protocolo, sin cifrar</td><td>—</td></tr>
+        <tr><td><code>localhost</code></td><td>Tu propia máquina (127.0.0.1)</td><td>—</td></tr>
+        <tr><td><code>:8080</code></td><td>Puerto donde escucha Tomcat</td><td>Default de Spring Boot</td></tr>
+        <tr><td><code>/api</code></td><td>Prefijo de toda la clase</td><td><code>@RequestMapping("/api")</code></td></tr>
+        <tr><td><code>/employees</code></td><td>Ruta del método</td><td><code>@GetMapping("/employees")</code></td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <p>La URL final es la <strong>suma</strong> de la anotación de la clase más la del método. Por eso es <code>/api/employees</code> y no solo <code>/employees</code>.</p>
+
+  <h3>Guarda la URL en una variable</h3>
+  <p>Para no repetirla treinta veces, guárdala en una variable de shell. Vive solo en esa terminal: si abres otra pestaña, ahí no existe.</p>
+
+  <div class="term">
+    <button class="copy" type="button">Copiar</button>
+<pre><code><span class="p">$</span> <span class="cmd">BASE=http://localhost:8080/api/employees</span>
+<span class="p">$</span> <span class="cmd">curl -s $BASE | jq .</span></code></pre>
+  </div>
+
+  <p class="note warn"><strong>Sin espacios alrededor del <code>=</code>.</strong> Si escribes <code>BASE = http://...</code> bash intentará ejecutar un programa llamado <code>BASE</code> y fallará. Al usarla lleva <code>$</code> delante: <code>$BASE</code>.</p>
+</section>
+
+<!-- ============ 4 ============ -->
+<section id="anatomia">
+  <p class="rubric">Paso cuatro</p>
+  <h2 class="sec"><span class="num">04</span> Anatomía de un comando curl</h2>
+  <p>Todos los comandos de esta guía se arman con las mismas seis piezas. Entiéndelas una vez y ya no tienes que memorizar nada.</p>
+
+  <div class="tw">
+    <table>
+      <thead><tr><th>Pieza</th><th>Qué hace</th></tr></thead>
+      <tbody>
+        <tr><td><code>-s</code></td><td><em>silent</em>. Oculta la barra de progreso que si no ensucia la salida.</td></tr>
+        <tr><td><code>-X MÉTODO</code></td><td>Fuerza el verbo HTTP: <code>GET</code>, <code>POST</code>, <code>PUT</code>, <code>PATCH</code>, <code>DELETE</code>.</td></tr>
+        <tr><td><code>-H "..."</code></td><td>Agrega una cabecera. La que usarás siempre es <code>Content-Type: application/json</code>.</td></tr>
+        <tr><td><code>-d '...'</code></td><td><em>data</em>. El cuerpo JSON que le mandas al servidor.</td></tr>
+        <tr><td><code>\</code> al final de línea</td><td>Continuación: «el comando sigue abajo». Es cosmético, todo cabría en una línea.</td></tr>
+        <tr><td><code>| jq .</code></td><td>Pasa la salida a jq, que la indenta. El <code>.</code> significa «todo tal cual, pero bonito».</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h3>Tres detalles que valen oro</h3>
+
+  <p class="note"><strong>El <code>$</code> del inicio no se escribe.</strong> En los bloques de esta guía el <code>$</code> representa el prompt de tu terminal. Copias lo que va <em>después</em>. Los botones «Copiar» ya lo omiten por ti.</p>
+
+  <p class="note warn"><strong><code>-d</code> ya implica <code>-X POST</code>.</strong> Si mandas cuerpo sin especificar verbo, curl asume POST. Por eso en PUT, PATCH y DELETE el <code>-X</code> sí es obligatorio: sin él acabarías creando registros en lugar de actualizarlos.</p>
+
+  <p class="note warn"><strong><code>-s</code> también silencia los errores de red.</strong> Si el servidor está caído, <code>curl -s</code> no dice absolutamente nada y parece que no pasó nada. Cuando estés depurando usa <code>-sS</code>: la <code>S</code> mayúscula vuelve a mostrar los errores.</p>
+
+  <h3>El header Content-Type no es decorativo</h3>
+  <p>Sin <code>-H "Content-Type: application/json"</code>, curl anuncia el cuerpo como <code>application/x-www-form-urlencoded</code>, que es el formato de un formulario HTML. Spring ve un <code>@RequestBody</code> esperando JSON, no sabe cómo convertirlo y devuelve <strong>415 Unsupported Media Type</strong>. Es el error número uno de todo el que empieza con REST.</p>
+
+  <h3>Comillas: simples por fuera, dobles por dentro</h3>
+  <p>El JSON exige comillas dobles en sus llaves y valores. Las comillas simples de bash envuelven todo el bloque para que el shell no intente interpretar nada de adentro. Si inviertes el orden, bash se come las comillas del JSON y curl manda basura.</p>
+
+  <h3>Ver el código de estado</h3>
+  <p>El cuerpo de la respuesta por sí solo no te dice si la operación fue un éxito. Para verlo, agrega <code>-w</code> (<em>write-out</em>), que imprime una plantilla al terminar:</p>
+
+  <div class="term">
+    <button class="copy" type="button">Copiar</button>
+<pre><code><span class="p">$</span> <span class="cmd">curl -s -w "\n[HTTP %{http_code}]\n" $BASE/1</span>
+<span class="out">{"firstName":"Patrobas","lastName":"Filologo","email":"patrobas@gmail.com","id":1}
+[HTTP 200]</span></code></pre>
+  </div>
+
+  <p>Otras variables útiles: <code>%{time_total}</code> (segundos que tardó) y <code>%{size_download}</code> (bytes recibidos). Si además quieres ver las cabeceras que devuelve el servidor, usa <code>-i</code>; para ver la conversación completa, <code>-v</code>.</p>
+
+  <p class="note warn"><strong>No mezcles <code>-w</code> con <code>| jq</code>.</strong> La línea <code>[HTTP 200]</code> no es JSON y jq revienta con <em>parse error</em>. Usa uno o el otro.</p>
+</section>
+
+<!-- ============ 5 ============ -->
+<section id="endpoints">
+  <p class="rubric">Paso cinco</p>
+  <h2 class="sec"><span class="num">05</span> Las seis rutas</h2>
+  <p>Una tarjeta por endpoint. Las respuestas que ves son reales, capturadas contra la app corriendo. Ejecuta cada comando y compara.</p>
+
+  <div class="ep">
+    <div class="ep-head">
+      <span class="verb get">GET</span>
+      <span class="path">/api/employees</span>
+      <span class="src">findAll()</span>
+    </div>
+    <p>Lista todos los empleados. La petición más simple que existe: sin verbo explícito (GET es el default de curl), sin cabeceras y sin cuerpo.</p>
+    <div class="term">
+      <button class="copy" type="button">Copiar</button>
+<pre><code><span class="p">$</span> <span class="cmd">curl -s $BASE | jq .</span>
+<span class="out">[
+  {
+    "firstName": "Patrobas",
+    "lastName": "Filologo",
+    "email": "patrobas@gmail.com",
+    "id": 1
+  }
+]</span></code></pre>
+    </div>
+    <p class="note">Devuelve un <strong>array</strong>: fíjate en los corchetes <code>[ ]</code>. Aunque haya un solo empleado, sigue siendo una lista.</p>
+  </div>
+
+  <div class="ep">
+    <div class="ep-head">
+      <span class="verb get">GET</span>
+      <span class="path">/api/employees/{id}</span>
+      <span class="src">getEmployee()</span>
+    </div>
+    <p>Trae un empleado concreto. El número del final entra al método como <code>@PathVariable int employeeId</code>.</p>
+    <div class="term">
+      <button class="copy" type="button">Copiar</button>
+<pre><code><span class="p">$</span> <span class="cmd">curl -s $BASE/1 | jq .</span>
+<span class="out">{
+  "firstName": "Patrobas",
+  "lastName": "Filologo",
+  "email": "patrobas@gmail.com",
+  "id": 1
+}</span></code></pre>
+    </div>
+    <p class="note">Devuelve un <strong>objeto</strong> suelto, sin corchetes. Si el id no existe recibes un 500 — ver <a href="#rarezas">rarezas del código</a>.</p>
+  </div>
+
+  <div class="ep">
+    <div class="ep-head">
+      <span class="verb post">POST</span>
+      <span class="path">/api/employees</span>
+      <span class="src">addEmployee()</span>
+    </div>
+    <p>Crea un empleado nuevo. Aquí aparecen por primera vez el header y el cuerpo.</p>
+    <div class="term">
+      <button class="copy" type="button">Copiar</button>
+<pre><code><span class="p">$</span> <span class="cmd">curl -s -X POST $BASE \</span>
+<span class="cmd">  -H "Content-Type: application/json" \</span>
+<span class="cmd">  -d '{"firstName":"Ada","lastName":"Lovelace","email":"ada@gmail.com"}' | jq .</span>
+<span class="out">{
+  "firstName": "Ada",
+  "lastName": "Lovelace",
+  "email": "ada@gmail.com",
+  "id": 2
+}</span></code></pre>
+    </div>
+    <p class="note"><strong>No mandes <code>id</code>.</strong> El método hace <code>theEmployee.setId(0)</code> antes de guardar, para forzar un INSERT en vez de un UPDATE. Aunque escribieras <code>"id":99</code>, lo pisa. Quien asigna el id real es el <code>AUTO_INCREMENT</code> de MySQL, y te lo devuelve en la respuesta: <strong>anótalo, lo necesitas para los siguientes pasos</strong>.</p>
+  </div>
+
+  <div class="ep">
+    <div class="ep-head">
+      <span class="verb put">PUT</span>
+      <span class="path">/api/employees</span>
+      <span class="src">updateEmployee()</span>
+    </div>
+    <p>Actualiza un empleado por completo. Cambia el <code>2</code> por el id que te devolvió tu POST.</p>
+    <div class="term">
+      <button class="copy" type="button">Copiar</button>
+<pre><code><span class="p">$</span> <span class="cmd">curl -s -X PUT $BASE \</span>
+<span class="cmd">  -H "Content-Type: application/json" \</span>
+<span class="cmd">  -d '{"id":2,"firstName":"Ada","lastName":"Byron","email":"ada.byron@gmail.com"}' | jq .</span>
+<span class="out">{
+  "firstName": "Ada",
+  "lastName": "Byron",
+  "email": "ada.byron@gmail.com",
+  "id": 2
+}</span></code></pre>
+    </div>
+    <p class="note warn"><strong>La URL va pelona, sin <code>/2</code>.</strong> El id viaja <em>dentro del JSON</em>, porque la firma del método es <code>updateEmployee(@RequestBody Employee)</code> y no recibe ningún <code>@PathVariable</code>. Es una decisión de diseño de este curso; muchas APIs reales sí usan <code>PUT /employees/2</code>.</p>
+    <p class="note warn"><strong>PUT reemplaza el objeto entero.</strong> Tienes que mandar los cuatro campos. Si omites <code>email</code>, se guarda como <code>NULL</code> en la base de datos. Para cambios parciales existe PATCH.</p>
+  </div>
+
+  <div class="ep">
+    <div class="ep-head">
+      <span class="verb patch">PATCH</span>
+      <span class="path">/api/employees/{id}</span>
+      <span class="src">patchEmployee()</span>
+    </div>
+    <p>Actualiza <em>solo los campos que mandas</em>. Aquí el id vuelve a la URL y el cuerpo lleva únicamente lo que cambia.</p>
+    <div class="term">
+      <button class="copy" type="button">Copiar</button>
+<pre><code><span class="p">$</span> <span class="cmd">curl -s -X PATCH $BASE/2 \</span>
+<span class="cmd">  -H "Content-Type: application/json" \</span>
+<span class="cmd">  -d '{"lastName":"King-Noel"}' | jq .</span>
+<span class="out">{
+  "firstName": "Ada",
+  "lastName": "King-Noel",
+  "email": "ada.byron@gmail.com",
+  "id": 2
+}</span></code></pre>
+    </div>
+    <p>Por dentro funciona distinto a PUT: recibe el cuerpo como <code>Map&lt;String, Object&gt;</code> en vez de <code>Employee</code>, trae el registro actual de la base y le pega encima solo las llaves que mandaste con <code>jsonMapper.updateValue()</code>. Lo demás queda intacto — nota que <code>firstName</code> y <code>email</code> sobrevivieron.</p>
+    <p class="note warn"><strong>Tiene una guarda de seguridad.</strong> Si incluyes <code>"id"</code> en el cuerpo, revienta a propósito con <em>«Employee id cannot be modified»</em>. Pruébalo: es el comportamiento correcto, no un bug.</p>
+  </div>
+
+  <div class="ep">
+    <div class="ep-head">
+      <span class="verb delete">DELETE</span>
+      <span class="path">/api/employees/{id}</span>
+      <span class="src">deleteEmployee()</span>
+    </div>
+    <p>Borra un empleado. Id en la URL, sin cuerpo — y por lo tanto <strong>sin <code>-H</code> ni <code>-d</code></strong>: no mandas contenido, así que no hay Content-Type que declarar.</p>
+    <div class="term">
+      <button class="copy" type="button">Copiar</button>
+<pre><code><span class="p">$</span> <span class="cmd">curl -s -X DELETE $BASE/2</span>
+<span class="out">Deleted employee id - 2</span></code></pre>
+    </div>
+    <p class="note"><strong>Aquí no hay <code>| jq .</code></strong>, y es a propósito: el método devuelve un <code>String</code>, no un objeto. La respuesta es texto plano, y si se lo pasaras a jq fallaría con <em>parse error</em> porque no es JSON válido.</p>
+  </div>
+
+  <h3>El patrón, en una tabla</h3>
+  <p>Todo lo anterior se resume en dos preguntas: dónde va el id y si hay cuerpo.</p>
+
+  <div class="tw">
+    <table>
+      <thead><tr><th>Verbo</th><th>¿Dónde va el id?</th><th>¿Cuerpo?</th><th>Content-Type</th><th>Devuelve</th></tr></thead>
+      <tbody>
+        <tr><td><span class="verb get">GET</span> todos</td><td>—</td><td>no</td><td>no</td><td>array JSON</td></tr>
+        <tr><td><span class="verb get">GET</span> uno</td><td>URL</td><td>no</td><td>no</td><td>objeto JSON</td></tr>
+        <tr><td><span class="verb post">POST</span></td><td>ninguno</td><td>sí, completo</td><td><strong>sí</strong></td><td>objeto creado</td></tr>
+        <tr><td><span class="verb put">PUT</span></td><td><strong>cuerpo</strong></td><td>sí, completo</td><td><strong>sí</strong></td><td>objeto actualizado</td></tr>
+        <tr><td><span class="verb patch">PATCH</span></td><td>URL</td><td>sí, parcial</td><td><strong>sí</strong></td><td>objeto actualizado</td></tr>
+        <tr><td><span class="verb delete">DELETE</span></td><td>URL</td><td>no</td><td>no</td><td>texto plano</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <p>La regla que resume la tabla: <strong>si mandas cuerpo, necesitas el header <code>Content-Type</code></strong>. Si no mandas cuerpo, no lo necesitas.</p>
+</section>
+
+<!-- ============ 6 ============ -->
+<section id="ciclo">
+  <p class="rubric">Paso seis</p>
+  <h2 class="sec"><span class="num">06</span> El ciclo CRUD completo</h2>
+  <p>Ahora encadena todo en una sola sesión. Este es el ejercicio que debes poder hacer de memoria: crear, leer, actualizar, parchear y borrar, dejando la tabla como estaba al principio.</p>
+
+  <div class="term">
+    <button class="copy" type="button">Copiar</button>
+<pre><code><span class="cm"># 0 · define la variable y mira el estado inicial</span>
+<span class="p">$</span> <span class="cmd">BASE=http://localhost:8080/api/employees</span>
+<span class="p">$</span> <span class="cmd">curl -s $BASE | jq .</span>
+
+<span class="cm"># 1 · CREATE — apunta el id que te devuelve</span>
+<span class="p">$</span> <span class="cmd">curl -s -X POST $BASE -H "Content-Type: application/json" \</span>
+<span class="cmd">  -d '{"firstName":"Grace","lastName":"Hopper","email":"grace@gmail.com"}' | jq .</span>
+
+<span class="cm"># 2 · READ — sustituye 3 por TU id</span>
+<span class="p">$</span> <span class="cmd">curl -s $BASE/3 | jq .</span>
+
+<span class="cm"># 3 · UPDATE total</span>
+<span class="p">$</span> <span class="cmd">curl -s -X PUT $BASE -H "Content-Type: application/json" \</span>
+<span class="cmd">  -d '{"id":3,"firstName":"Grace","lastName":"Murray Hopper","email":"grace.hopper@navy.mil"}' | jq .</span>
+
+<span class="cm"># 4 · UPDATE parcial</span>
+<span class="p">$</span> <span class="cmd">curl -s -X PATCH $BASE/3 -H "Content-Type: application/json" \</span>
+<span class="cmd">  -d '{"email":"amazing.grace@navy.mil"}' | jq .</span>
+
+<span class="cm"># 5 · DELETE y verificación final</span>
+<span class="p">$</span> <span class="cmd">curl -s -X DELETE $BASE/3</span>
+<span class="p">$</span> <span class="cmd">curl -s $BASE | jq .</span></code></pre>
+  </div>
+
+  <p class="note warn"><strong>El <code>3</code> es un ejemplo, no una constante.</strong> El id te lo asigna MySQL y va subiendo cada vez que creas un registro — aunque lo borres, el contador no retrocede. Usa siempre el que te devolvió <em>tu</em> POST. Si lo perdiste, recupéralo con un <code>curl -s $BASE | jq .</code></p>
+
+  <p>Al terminar, el último GET debe mostrar exactamente lo mismo que el primero. Si sobró alguien, bórralo.</p>
+
+  <h3>La versión automatizada</h3>
+  <p>El proyecto incluye un script que hace este ciclo completo y verifica cada paso. Úsalo <em>después</em> de haberlo hecho a mano, para comparar tus resultados:</p>
+
+  <div class="term">
+    <button class="copy" type="button">Copiar</button>
+<pre><code><span class="p">$</span> <span class="cmd">./guias/test-endpoints.sh</span></code></pre>
+  </div>
+
+  <p>Es idempotente: crea su propio registro de prueba, lo manipula y lo borra. Puedes correrlo las veces que quieras sin ensuciar la tabla.</p>
+</section>
+
+<!-- ============ windows ============ -->
+<section id="windows">
+  <p class="rubric">Referencia</p>
+  <h2 class="sec">Si usas Windows</h2>
+  <p>Los comandos de esta guía están escritos para bash y zsh (macOS y Linux). En Windows funcionan igual, pero hay tres trampas de las que nadie te avisa.</p>
+
+  <h3>1. Escribe <code>curl.exe</code>, no <code>curl</code></h3>
+  <p>En PowerShell, <code>curl</code> es un alias de <code>Invoke-WebRequest</code>, que es otro programa distinto y no entiende <code>-s</code> ni <code>-X</code>. Si ves el error <em>«A parameter cannot be found that matches parameter name 's'»</em>, es exactamente esto. La solución es llamar al ejecutable real por su nombre completo:</p>
+
+  <div class="term">
+    <button class="copy" type="button">Copiar</button>
+<pre><code><span class="p">$</span> <span class="cmd">curl.exe -s http://localhost:8080/api/employees</span></code></pre>
+  </div>
+
+  <h3>2. Las comillas se comportan distinto</h3>
+  <p>PowerShell y CMD se comen las comillas dobles del JSON antes de que curl las vea. En <strong>CMD</strong>, invierte las comillas y escapa las de adentro con <code>\"</code>:</p>
+
+  <div class="term">
+    <button class="copy" type="button">Copiar</button>
+<pre><code><span class="p">$</span> <span class="cmd">curl.exe -X POST http://localhost:8080/api/employees -H "Content-Type: application/json" -d "{\"firstName\":\"Ada\",\"lastName\":\"Lovelace\",\"email\":\"ada@gmail.com\"}"</span></code></pre>
+  </div>
+
+  <h3>3. La solución definitiva: el cuerpo en un archivo</h3>
+  <p>En lugar de pelearte con las comillas, guarda el JSON en un archivo y pásaselo a curl con <code>@</code>. Esto funciona <strong>idéntico en Windows, macOS y Linux</strong>, y es lo que se hace en la vida real cuando el cuerpo crece:</p>
+
+  <div class="term">
+    <button class="copy" type="button">Copiar</button>
+<pre><code><span class="cm"># guarda esto como empleado.json</span>
+<span class="cmd">{"firstName":"Ada","lastName":"Lovelace","email":"ada@gmail.com"}</span>
+
+<span class="cm"># y mándalo con @ delante del nombre del archivo</span>
+<span class="p">$</span> <span class="cmd">curl.exe -s -X POST http://localhost:8080/api/employees -H "Content-Type: application/json" -d "@empleado.json"</span></code></pre>
+  </div>
+
+  <p class="note">Alternativa cómoda: instala <strong>Git Bash</strong> o <strong>WSL</strong> y usa los comandos de esta guía tal cual, sin modificar nada. Es lo que recomiendo si vas a trabajar seguido con APIs.</p>
+</section>
+
+<!-- ============ rarezas ============ -->
+<section id="rarezas">
+  <p class="rubric">Referencia</p>
+  <h2 class="sec">Rarezas del código que te van a confundir</h2>
+  <p>Estos comportamientos son del proyecto tal como está en esta etapa del curso. No son fallas tuyas: si te topas con alguno, ya sabes por qué pasa.</p>
+
+  <div class="tw">
+    <table>
+      <thead><tr><th>Lo que observas</th><th>Por qué pasa</th></tr></thead>
+      <tbody>
+        <tr>
+          <td class="wrap-ok"><strong>Todos los errores son 500,<br>nunca 404</strong></td>
+          <td>Cuando un id no existe, el controlador lanza una <code>RuntimeException</code> y todavía no hay un <code>@ControllerAdvice</code> que la traduzca a un 404 decente. Se resuelve en la sección de <em>exception handling</em>.</td>
+        </tr>
+        <tr>
+          <td class="wrap-ok"><strong>Un PUT sin <code>id</code><br>crea un duplicado</strong></td>
+          <td><code>updateEmployee()</code> llama directo a <code>save()</code> sin validar nada. Si el id falta o vale 0, JPA hace un INSERT y acabas con un empleado de más en vez de recibir un error.</td>
+        </tr>
+        <tr>
+          <td class="wrap-ok"><strong>Un PUT borró un campo<br>que no toqué</strong></td>
+          <td>PUT es reemplazo total. El campo que omitas se guarda como <code>NULL</code>. Es correcto según la semántica de HTTP — para cambios parciales usa PATCH.</td>
+        </tr>
+        <tr>
+          <td class="wrap-ok"><strong>El POST ignoró<br>el id que mandé</strong></td>
+          <td>A propósito: <code>addEmployee()</code> hace <code>setId(0)</code> antes de guardar, para garantizar que siempre sea un alta y nunca una actualización accidental.</td>
+        </tr>
+        <tr>
+          <td class="wrap-ok"><strong>El PATCH rechaza<br><code>id</code> en el cuerpo</strong></td>
+          <td>También a propósito. Es una guarda de seguridad explícita: la clave primaria no debe poder cambiarse desde una petición.</td>
+        </tr>
+        <tr>
+          <td class="wrap-ok"><strong>Los ids no se reciclan<br>al borrar</strong></td>
+          <td>El <code>AUTO_INCREMENT</code> de MySQL solo avanza. Si borras el id 5, el siguiente registro será el 6, no el 5.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- ============ errores ============ -->
+<section id="errores">
+  <p class="rubric">Referencia</p>
+  <h2 class="sec">Errores comunes</h2>
+  <p>Busca aquí el mensaje que te salió antes de preguntar. Casi todo lo que falla en esta práctica está en esta tabla.</p>
+
+  <div class="tw">
+    <table>
+      <thead><tr><th>Mensaje</th><th>Causa</th><th>Solución</th></tr></thead>
+      <tbody>
+        <tr>
+          <td class="wrap-ok"><code>Connection refused</code></td>
+          <td>La app no está corriendo, o la paraste sin darte cuenta.</td>
+          <td>Vuelve a la terminal de la app y arráncala. Verifica con <code>lsof -i :8080</code>.</td>
+        </tr>
+        <tr>
+          <td class="wrap-ok"><code>415 Unsupported Media Type</code></td>
+          <td>Mandaste cuerpo sin declarar el tipo.</td>
+          <td>Agrega <code>-H "Content-Type: application/json"</code>.</td>
+        </tr>
+        <tr>
+          <td class="wrap-ok"><code>400 Bad Request</code></td>
+          <td>El JSON está mal formado: una coma de más, una comilla faltante, comillas curvas copiadas de Word.</td>
+          <td>Revisa el cuerpo carácter por carácter. Escribe las comillas a mano, no las pegues de un procesador de texto.</td>
+        </tr>
+        <tr>
+          <td class="wrap-ok"><code>500</code> en un GET o DELETE</td>
+          <td>Ese id no existe en la tabla.</td>
+          <td>Lista todos con <code>curl -s $BASE | jq .</code> y usa un id real.</td>
+        </tr>
+        <tr>
+          <td class="wrap-ok"><code>Communications link failure</code></td>
+          <td>MySQL no está arriba, o el contenedor se detuvo al reiniciar la máquina.</td>
+          <td><code>docker start mysql-9.7</code> y vuelve a arrancar la app.</td>
+        </tr>
+        <tr>
+          <td class="wrap-ok"><code>jq: parse error</code></td>
+          <td>Le pasaste a jq algo que no es JSON: la respuesta de DELETE, o la línea que agrega <code>-w</code>.</td>
+          <td>Quita el <code>| jq .</code> en DELETE, y no combines <code>-w</code> con jq.</td>
+        </tr>
+        <tr>
+          <td class="wrap-ok"><code>Port 8080 was already in use</code></td>
+          <td>Dejaste otra instancia de la app corriendo en otra terminal.</td>
+          <td>Ciérrala, o encuentra el proceso con <code>lsof -i :8080</code> y termínalo.</td>
+        </tr>
+        <tr>
+          <td class="wrap-ok">No sale absolutamente nada</td>
+          <td><code>-s</code> silenció el error de red.</td>
+          <td>Repite el comando con <code>-sS</code> para ver qué pasó realmente.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- ============ ejercicios ============ -->
+<section id="ejercicios">
+  <p class="rubric">Referencia</p>
+  <h2 class="sec">Ejercicios</h2>
+  <p>Resuélvelos en la terminal y entrega los comandos que usaste junto con la respuesta que recibiste.</p>
+
+  <ol class="prose">
+    <li><strong>Alta múltiple.</strong> Crea tres empleados distintos y luego lista la tabla para comprobar que están los tres. ¿Qué ids les tocaron?</li>
+    <li><strong>PATCH quirúrgico.</strong> Cambia <em>solo</em> el email de uno de ellos. Demuestra con un GET que su nombre y apellido no se movieron.</li>
+    <li><strong>Rompe el PUT a propósito.</strong> Manda un PUT omitiendo el campo <code>email</code>. Consulta después ese empleado y explica en una frase qué pasó y por qué.</li>
+    <li><strong>El id que no fue.</strong> Haz un POST incluyendo <code>"id": 999</code> en el cuerpo. ¿Qué id te devolvió el servidor? Busca en <code>EmployeeRestController.java</code> la línea exacta que lo explica.</li>
+    <li><strong>Solo el status.</strong> Consigue el código de estado de cada operación sin ver el cuerpo de la respuesta. <em>Pista:</em> combina <code>-o /dev/null</code> con <code>-w</code>.</li>
+    <li><strong>Limpieza.</strong> Borra los tres empleados que creaste y deja la tabla exactamente como la encontraste.</li>
+    <li><strong>Reto.</strong> Escribe tu propio script de bash que haga el ciclo CRUD completo y capture el id del POST automáticamente, sin que tú lo escribas a mano. <em>Pista:</em> <code>jq -r '.id'</code>.</li>
+  </ol>
+</section>
+
+</main>
+</div>
+
+<footer>
+  <div class="wrap">
+    <span>Employee API &middot; Spring Boot 4.1 &middot; Java 21</span>
+    <span>localhost:8080/api/employees</span>
+  </div>
+</footer>
+
+<script>
+document.querySelectorAll(".term").forEach(function (term) {
+  var btn = term.querySelector(".copy");
+  if (!btn) return;
+
+  btn.addEventListener("click", function () {
+    var lines = Array.prototype.map.call(
+      term.querySelectorAll(".cmd"),
+      function (n) { return n.textContent; }
+    );
+    var text = lines.join("\n");
+
+    var flash = function (msg) {
+      btn.textContent = msg;
+      setTimeout(function () { btn.textContent = "Copiar"; }, 1800);
+    };
+
+    var fallback = function () {
+      var ta = document.createElement("textarea");
+      ta.value = text;
+      ta.setAttribute("readonly", "");
+      ta.style.position = "fixed";
+      ta.style.opacity = "0";
+      document.body.appendChild(ta);
+      ta.select();
+      var ok = false;
+      try { ok = document.execCommand("copy"); } catch (e) { ok = false; }
+      document.body.removeChild(ta);
+      flash(ok ? "Copiado" : "Selecciónalo");
+    };
+
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(text).then(function () {
+        flash("Copiado");
+      }, fallback);
+    } else {
+      fallback();
+    }
+  });
+});
+
+var links = Array.prototype.slice.call(document.querySelectorAll(".toc a"));
+var byId = {};
+links.forEach(function (a) { byId[a.getAttribute("href").slice(1)] = a; });
+
+if ("IntersectionObserver" in window) {
+  var obs = new IntersectionObserver(function (entries) {
+    entries.forEach(function (e) {
+      if (!e.isIntersecting) return;
+      links.forEach(function (a) { a.classList.remove("on"); });
+      var a = byId[e.target.id];
+      if (a) a.classList.add("on");
+    });
+  }, { rootMargin: "-10% 0px -75% 0px", threshold: 0 });
+
+  document.querySelectorAll("section[id]").forEach(function (s) { obs.observe(s); });
+}
+</script>
