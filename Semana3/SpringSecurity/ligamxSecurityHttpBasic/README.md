@@ -136,4 +136,50 @@ Esperado:
 200 OK
 ```
 
----
+¿Cómo funciona HTTP Basic?
+
+`HTTP Basic` es un mecanismo de autenticación en el que el cliente envía sus credenciales en cada petición `HTTP` que realiza al servidor.
+
+Las credenciales se envían mediante el header Authorization utilizando el siguiente formato:
+
+`Authorization: Basic <credenciales>`
+
+Para generar las credenciales, el usuario y la contraseña se combinan utilizando el formato:
+
+`username:password`
+
+Por ejemplo:
+
+`john:test123`
+
+Esta cadena se codifica utilizando Base64 y se envía dentro del header Authorization.
+
+Cuando ejecutamos:
+
+`curl.exe -u john:test123 http://localhost:8071/api/employees`
+
+curl genera automáticamente el header Authorization correspondiente y lo incluye en la petición.
+
+El flujo de autenticación puede representarse de la siguiente manera:
+
+Cliente
+   |
+   | GET /api/employees
+   | Authorization: Basic <credenciales>
+   v
+Servidor / Spring Security
+   |
+   |-- Decodifica las credenciales
+   |-- Busca al usuario
+   |-- Verifica la contraseña
+   |-- Obtiene sus roles
+   v
+¿Credenciales válidas?
+   |
+   +-- NO --> 401 Unauthorized
+   |
+   +-- SÍ --> Comprueba los permisos
+                 |
+                 +-- Sin permiso --> 403 Forbidden
+                 |
+                 +-- Con permiso --> Ejecuta la petición
