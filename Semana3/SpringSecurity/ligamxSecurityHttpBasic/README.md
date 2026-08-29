@@ -136,7 +136,7 @@ Esperado:
 200 OK
 ```
 
-¿Cómo funciona HTTP Basic?
+## ¿Cómo funciona HTTP Basic?
 
 `HTTP Basic` es un mecanismo de autenticación en el que el cliente envía sus credenciales en cada petición `HTTP` que realiza al servidor.
 
@@ -156,7 +156,9 @@ Esta cadena se codifica utilizando Base64 y se envía dentro del header Authoriz
 
 Cuando ejecutamos:
 
-`curl.exe -u john:test123 http://localhost:8071/api/employees`
+```powershell
+curl.exe -u john:test123 http://localhost:8071/api/employees
+```
 
 curl genera automáticamente el header Authorization correspondiente y lo incluye en la petición.
 
