@@ -163,7 +163,7 @@ curl.exe -u john:test123 http://localhost:8071/api/employees
 curl genera automáticamente el header Authorization correspondiente y lo incluye en la petición.
 
 El flujo de autenticación puede representarse de la siguiente manera:
-
+```text
 Cliente
    |
    | GET /api/employees
@@ -185,3 +185,4 @@ Servidor / Spring Security
                  +-- Sin permiso --> 403 Forbidden
                  |
                  +-- Con permiso --> Ejecuta la petición
+```
