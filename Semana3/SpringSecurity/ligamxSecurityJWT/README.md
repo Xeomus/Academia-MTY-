@@ -1,276 +1,186 @@
-# PROYECTO 02 — JWT
+# Liga MX API con Spring Security y JWT
 
-## 9. Objetivo
+API REST para administrar equipos y jugadores de la Liga MX. El proyecto usa Spring Boot, Spring Security, JWT, Spring Data JPA y MySQL.
 
-Este proyecto cambia el mecanismo de autenticación.
+Todas las operaciones sobre equipos y jugadores requieren un token JWT. Los permisos incluidos en el token determinan si el usuario puede consultar o modificar los recursos.
 
-La contraseña viaja solamente al hacer login:
+## Requisitos
 
-```text
-POST /api/auth/login
-```
+- Java 21
+- MySQL
 
-Después, las peticiones utilizan:
+## Configuración
 
-```http
-Authorization: Bearer <token>
-```
+1. Crea en MySQL una base de datos llamada `ligamx`:
 
-Puerto:
+   ```sql
+   CREATE DATABASE ligamx;
+   ```
 
-```text
-8072
-```
+2. Copia el archivo de ejemplo:
 
-Endpoints principales:
+   ```powershell
+   Copy-Item src/main/resources/application.example.properties `
+     src/main/resources/application.properties
+   ```
 
-```text
-http://localhost:8072/api/auth/login
-http://localhost:8072/api/employees
-```
+3. Completa en `application.properties` las credenciales de MySQL:
 
----
+   ```properties
+   spring.datasource.url=jdbc:mysql://localhost:3306/ligamx
+   spring.datasource.username=TU_USUARIO
+   spring.datasource.password=TU_CONTRASEÑA
+   ```
 
-## 10. Arrancar `02-security-jwt`
+4. Define `JWT_SECRET` antes de iniciar la aplicación. Para HS256 conviene utilizar un secreto aleatorio de al menos 32 bytes.
 
-Maven:
+   ```powershell
+   $env:JWT_SECRET = "p7Kx3mQ9vL2nR8wT5yH1cF6jD0sA4zUeB9iN2oG7qXk="
+   ```
 
-```powershell
-.\mvnw spring-boot:run
-```
+`spring.jpa.hibernate.ddl-auto=update` crea o actualiza las tablas al arrancar.
 
-Gradle:
+## Ejecución
 
-```powershell
-.\gradlew bootRun
-```
-
----
-
-## 11. Probar acceso sin token
+En Windows PowerShell:
 
 ```powershell
-curl.exe -i http://localhost:8072/api/employees
+.\gradlew.bat bootRun
 ```
 
-Esperado:
+En Linux o macOS:
 
-```text
-401 Unauthorized
+```bash
+./gradlew bootRun
 ```
 
----
+La aplicación utiliza el puerto predeterminado de Spring Boot: `http://localhost:8080`.
 
-## 12. Login incorrecto
+## Usuarios iniciales
 
-```powershell
-curl.exe -i -u john:MALA `
-  -X POST http://localhost:8072/api/auth/login
-```
+Al iniciar la aplicación, `SecurityDataInitializer` registra estos usuarios si todavía no existen:
 
-Esperado:
+| Usuario | Contraseña | Rol | Acceso |
+|---|---|---|---|
+| `admin` | `admin123` | `ADMIN` | Consultar, crear, actualizar y eliminar |
+| `viewer` | `viewer123` | `VIEWER` | Solo consultar |
 
-```text
-401 Unauthorized
-```
+Estas credenciales son únicamente para desarrollo y demostración.
 
----
+## Autenticación
 
-## 13. Obtener JWT de John
+El login recibe las credenciales como JSON; no usa HTTP Basic:
 
 ```powershell
 $login = curl.exe -s `
-  -u john:test123 `
-  -X POST http://localhost:8072/api/auth/login |
+  -X POST http://localhost:8080/api/auth/login `
+  -H "Content-Type: application/json" `
+  -d '{"username":"admin","password":"admin123"}' |
   ConvertFrom-Json
 
-$TJ = $login.accessToken
+$token = $login.token
 ```
 
-Comprobar:
+La respuesta tiene esta forma:
 
-```powershell
-$TJ
+```json
+{
+  "token": "eyJ..."
+}
 ```
 
-Debe comenzar normalmente con:
-
-```text
-eyJ...
-```
-
----
-
-## 14. John hace GET con JWT
+Las siguientes peticiones deben enviar el token como Bearer:
 
 ```powershell
 curl.exe -i `
-  -H "Authorization: Bearer $TJ" `
-  http://localhost:8072/api/employees
+  -H "Authorization: Bearer $token" `
+  http://localhost:8080/api/teams
 ```
 
-Esperado:
+Un login con credenciales incorrectas devuelve `401 Unauthorized`. Una petición a un recurso protegido sin un JWT válido también devuelve `401`. Un usuario autenticado que no tiene el permiso requerido recibe `403 Forbidden`.
 
-```text
-200 OK
-```
+## Ejemplos con el usuario administrador
 
----
-
-## 15. John intenta crear
+### Crear un equipo
 
 ```powershell
-curl.exe -i `
-  -H "Authorization: Bearer $TJ" `
-  -X POST http://localhost:8072/api/employees `
+$team = curl.exe -s `
+  -X POST http://localhost:8080/api/teams `
+  -H "Authorization: Bearer $token" `
   -H "Content-Type: application/json" `
-  -d '{\"firstName\":\"X\",\"lastName\":\"Y\",\"email\":\"x@y.com\"}'
-```
-
-Esperado:
-
-```text
-403 Forbidden
-```
-
----
-
-## 16. HTTP Basic ya no funciona directamente contra `/employees`
-
-```powershell
-curl.exe -i `
-  -u susan:test123 `
-  http://localhost:8072/api/employees
-```
-
-Esperado:
-
-```text
-401 Unauthorized
-```
-
-El usuario y contraseña sirven para obtener un JWT en `/login`, pero `/api/employees` espera un `Bearer token`.
-
----
-
-## 17. Obtener tokens de Mary y Susan
-
-Mary:
-
-```powershell
-$TM = (curl.exe -s `
-  -u mary:test123 `
-  -X POST http://localhost:8072/api/auth/login |
-  ConvertFrom-Json).accessToken
-```
-
-Susan:
-
-```powershell
-$TS = (curl.exe -s `
-  -u susan:test123 `
-  -X POST http://localhost:8072/api/auth/login |
-  ConvertFrom-Json).accessToken
-```
-
----
-
-## 18. Mary crea un empleado temporal
-
-```powershell
-$nuevo = curl.exe -s `
-  -H "Authorization: Bearer $TM" `
-  -X POST http://localhost:8072/api/employees `
-  -H "Content-Type: application/json" `
-  -d '{\"firstName\":\"Temp\",\"lastName\":\"Jwt\",\"email\":\"temp@jwt.com\"}' |
+  -d '{"name":"Tigres UANL","city":"San Nicolas de los Garza","stadium":"Estadio Universitario","foundingYear":1960}' |
   ConvertFrom-Json
 
-$ID = $nuevo.id
+$teamId = $team.id
 ```
 
-Ver ID:
+Los campos `name`, `city` y `stadium` son obligatorios. `foundingYear` debe ser igual o posterior a 1800.
+
+### Crear un jugador dentro del equipo
 
 ```powershell
-$ID
+$player = curl.exe -s `
+  -X POST "http://localhost:8080/api/teams/$teamId/players" `
+  -H "Authorization: Bearer $token" `
+  -H "Content-Type: application/json" `
+  -d '{"name":"Andre-Pierre Gignac","number":10,"position":"Delantero","nationality":"Francesa"}' |
+  ConvertFrom-Json
+
+$playerId = $player.id
 ```
 
----
+`name`, `position` y `nationality` son obligatorios. `number` debe estar entre 1 y 99.
 
-## 19. Mary no puede borrar
-
-```powershell
-curl.exe -i `
-  -H "Authorization: Bearer $TM" `
-  -X DELETE "http://localhost:8072/api/employees/$ID"
-```
-
-Esperado:
-
-```text
-403 Forbidden
-```
-
----
-
-## 20. Susan sí puede borrar
+### Actualizar y eliminar un jugador
 
 ```powershell
 curl.exe -i `
-  -H "Authorization: Bearer $TS" `
-  -X DELETE "http://localhost:8072/api/employees/$ID"
+  -X PUT "http://localhost:8080/api/players/$playerId" `
+  -H "Authorization: Bearer $token" `
+  -H "Content-Type: application/json" `
+  -d '{"name":"Andre-Pierre Gignac","number":10,"position":"Delantero centro","nationality":"Francesa"}'
+
+curl.exe -i `
+  -X DELETE "http://localhost:8080/api/players/$playerId" `
+  -H "Authorization: Bearer $token"
 ```
 
-Esperado:
+## Comprobar los permisos de VIEWER
 
-```text
-200 OK
+```powershell
+$viewerToken = (curl.exe -s `
+  -X POST http://localhost:8080/api/auth/login `
+  -H "Content-Type: application/json" `
+  -d '{"username":"viewer","password":"viewer123"}' |
+  ConvertFrom-Json).token
 ```
-## ¿Cómo funciona JWT?
 
-`JWT` (JSON Web Token) es un mecanismo basado en tokens que permite que un usuario se autentique y posteriormente utilice un token para acceder a los recursos protegidos de la aplicación.
+El usuario puede consultar equipos:
 
-A diferencia de `HTTP Basic`, donde el usuario y la contraseña se envían en cada petición, con `JWT` las credenciales se utilizan principalmente durante el proceso de login.
-
-En este proyecto, el flujo comienza realizando:
-
-`POST /api/auth/login`
-
-El usuario envía sus credenciales:
-
-`john:test123`
-
-Spring Security verifica que el usuario exista y que la contraseña sea correcta.
-
-Si las credenciales son incorrectas:
-
-`401 Unauthorized`
-
-Si son correctas, el servidor genera un JWT y lo devuelve al cliente.
-
-El flujo puede representarse así:
-```text
-Cliente
-   |
-   | username + password
-   v
-POST /api/auth/login
-   |
-   v
-Spring Security
-   |
-   |-- Busca al usuario
-   |-- Verifica la contraseña
-   |-- Obtiene sus roles
-   v
-¿Credenciales válidas?
-   |
-   +-- NO --> 401 Unauthorized
-   |
-   +-- SÍ
-        |
-        v
-   Genera un JWT
-        |
-        v
-   Devuelve el token
+```powershell
+curl.exe -i `
+  -H "Authorization: Bearer $viewerToken" `
+  http://localhost:8080/api/teams
 ```
+
+Pero no puede crearlos; esta petición devuelve `403 Forbidden`:
+
+```powershell
+curl.exe -i `
+  -X POST http://localhost:8080/api/teams `
+  -H "Authorization: Bearer $viewerToken" `
+  -H "Content-Type: application/json" `
+  -d '{"name":"Equipo de prueba","city":"Monterrey","stadium":"Estadio de prueba","foundingYear":2000}'
+```
+
+## ¿Como funciona JWT?
+
+`JWT` (JSON Web Token) es un mecanismo de autenticación basado en tokens. A diferencia de `HTTP Basic`, donde el usuario y la contraseña se envían en cada petición, con `JWT` las credenciales se envían principalmente una vez, durante el inicio de sesión.
+
+Cuando el usuario realiza el login, el servidor verifica el usuario y la contraseña. Si las credenciales son correctas, genera un `JWT` y se lo devuelve al cliente. A partir de ese momento, el cliente utiliza ese token para acceder a los recursos protegidos, enviándolo en el encabezado `Authorization` con el formato `Bearer <token>`.
+
+Cuando el cliente realiza una petición con el `JWT`, Spring Security valida que el token tenga una firma correcta, que no haya expirado y que represente a un usuario autorizado. Si el token es válido, permite continuar con la petición según los roles y permisos correspondientes.
+
+## Colección de Postman
+
+El archivo `LigaMX.postman_collection.json` incluye peticiones para iniciar sesión como `ADMIN` y `VIEWER`, guardar los tokens automáticamente y probar los permisos de todos los endpoints.
