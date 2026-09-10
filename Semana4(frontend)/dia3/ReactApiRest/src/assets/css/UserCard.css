@@ -1,0 +1,65 @@
+.card {
+    position: relative;
+    height: 100%;
+    border-radius: 14px !important;
+    transition: transform 0.2s ease, box-shadow 0.2s ease !important;
+    background-color: #ffffff;
+}
+
+.card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 24px rgba(15, 23, 42, 0.08) !important;
+}
+
+.actionButtons {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    display: flex;
+    gap: 4px;
+}
+
+.actionBtn {
+    color: #64748b !important;
+}
+
+.actionBtn:hover {
+    color: #2563eb !important;
+    background-color: #f1f5f9 !important;
+}
+
+.deleteBtn:hover {
+    background-color: #fee2e2 !important;
+}
+
+.cardContent {
+    padding-top: 32px !important;
+    padding-bottom: 24px !important;
+    text-align: center;
+}
+
+.avatar {
+    background-color: #2563eb !important;
+    width: 60px !important;
+    height: 60px !important;
+    font-size: 1.25rem !important;
+    font-weight: 700 !important;
+    box-shadow: 0 4px 12px rgba(37, 99, 235, 0.25) !important;
+}
+
+.userName {
+    font-weight: 700 !important;
+    color: #0f172a;
+    line-height: 1.25 !important;
+}
+
+.userHandle {
+    color: #64748b !important;
+}
+
+.userEmail {
+    color: #2563eb !important;
+    font-weight: 600 !important;
+    word-break: break-word;
+    padding-top: 4px;
+}
