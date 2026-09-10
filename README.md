@@ -1,110 +1,94 @@
 # Academia MTY — Xideral
 
-Repositorio de ejercicios y proyectos desarrollados durante la academia. El contenido está organizado por semanas y recorre conceptos de Java, programación orientada a objetos, patrones de diseño, inyección de dependencias y construcción de APIs REST con Spring Boot.
+Repositorio de ejercicios y proyectos desarrollados durante la academia. El contenido está organizado por semanas y avanza desde fundamentos de Java y desarrollo backend con Spring Boot hasta pruebas, programación reactiva y aplicaciones frontend con React.
 
 ## Contenido
 
-| Semana | Proyecto | Descripción | Tecnologías principales |
+| Semana | Tema o proyecto | Descripción | Tecnologías principales |
 | --- | --- | --- | --- |
-| 1 | [Pacman](./Semana1/Pacman/) | Juego de escritorio inspirado en Pacman, con distintas estrategias de movimiento para los fantasmas. | Java, Swing, Gradle |
-| 2 | [Inyección de dependencias](./Semana2/inyeccionDependencias/src/) | Ejemplo comparativo de código con y sin inyección de dependencias. | Java |
+| 1 | [Pacman](./Semana1/Pacman/) | Juego de escritorio con distintas estrategias de movimiento para los fantasmas. | Java, Swing, Gradle |
+| 2 | [Inyección de dependencias](./Semana2/inyeccionDependencias/src/) | Comparación entre dependencias creadas internamente y dependencias recibidas desde el exterior. | Java |
 | 2 | [Liga MX API](./Semana2/ligamx/) | API REST para administrar equipos y jugadores con persistencia relacional. | Spring Boot, Spring Data JPA, MySQL |
-| 2 | [Liga MX Mongo API](./Semana2/ligaMxMongo/) | Variante de la API de Liga MX con persistencia documental. | Spring Boot, Spring Data MongoDB, MongoDB |
-| 2 | [Liga MX API con seguridad](./Semana2/ligamxSecurity/) | Variante de la API relacional protegida con autenticación HTTP Basic y roles. | Spring Boot, Spring Security, JPA, MySQL |
+| 2 | [Liga MX Mongo API](./Semana2/ligaMxMongo/) | Variante documental de la API de Liga MX. | Spring Boot, Spring Data MongoDB, MongoDB |
+| 3 | [Threads](./Semana3/threads/) | Ejemplo de concurrencia mediante `Thread` y `Runnable`. | Java |
+| 3 | [Serialización](./Semana3/serializacion/) | Escritura y recuperación de objetos Java en archivos binarios. | Java |
+| 3 | [Spring Security](./Semana3/SpringSecurity/) | Ejemplos de autenticación con HTTP Basic, JWT y OAuth2 con Keycloak. | Spring Boot, Spring Security, MySQL, Keycloak |
+| 3 | [Programación reactiva](<./Semana3/Programacion%20Reactiva/>) | Ejercicios con `Mono`, `Flux` y eventos enviados por el servidor. | Spring WebFlux, Reactor, Maven |
+| 3 | [Pruebas unitarias](./Semana3/testing/) | Proyectos progresivos de pruebas con aserciones, parametrización y dobles de prueba. | Java, JUnit, Mockito, Maven |
+| 4 | [Desarrollo frontend](<./Semana4(frontend)/>) | Ejercicios de HTML, CSS y JavaScript que evolucionan hacia aplicaciones React con APIs REST y autenticación. | React, TypeScript, Vite, Material UI |
 
-## Proyectos
+## Proyectos por semana
 
-### Semana 1 — Pacman
+### Semana 1 — Java y patrones de diseño
 
-Aplicación de escritorio desarrollada con Java Swing. El proyecto separa el estado del juego, el tablero, las colisiones y las entidades, y utiliza el patrón Strategy para implementar distintos comportamientos de los fantasmas, como persecución, emboscada, flanqueo y movimiento aleatorio.
+[Pacman](./Semana1/Pacman/) es una aplicación de escritorio construida con Java Swing. Separa el estado del juego, el tablero, las colisiones y las entidades, y aplica el patrón Strategy para implementar los distintos comportamientos de los fantasmas.
 
-Para ejecutarlo en Windows:
+### Semana 2 — Persistencia y APIs REST
 
-```powershell
-cd Semana1\Pacman
-.\gradlew.bat run
-```
+La segunda semana introduce la [inyección de dependencias](./Semana2/inyeccionDependencias/src/) y desarrolla dos versiones de una API de Liga MX:
 
-En Linux o macOS:
+- [Liga MX API](./Semana2/ligamx/), con persistencia relacional mediante JPA y MySQL.
+- [Liga MX Mongo API](./Semana2/ligaMxMongo/), con documentos de MongoDB que incorporan la lista de jugadores.
 
-```bash
-cd Semana1/Pacman
-./gradlew run
-```
+Cada API incluye su propia guía y una colección de Postman para probar los endpoints.
 
-### Semana 2 — Inyección de dependencias
+### Semana 3 — Java avanzado y backend
 
-Ejemplo en Java sin framework que muestra la diferencia entre crear una dependencia dentro de una clase y recibirla desde el exterior. Incluye implementaciones intercambiables para enviar mensajes por correo electrónico, SMS o paloma mensajera.
+La tercera semana reúne ejercicios sobre [hilos](./Semana3/threads/), [serialización](./Semana3/serializacion/), [seguridad](./Semana3/SpringSecurity/), [programación reactiva](<./Semana3/Programacion%20Reactiva/>) y [pruebas unitarias](./Semana3/testing/).
 
-Consulta la [explicación completa](./Semana2/inyeccionDependencias/src/README.md) y los ejemplos en las carpetas [`before`](./Semana2/inyeccionDependencias/src/before/) y [`after`](./Semana2/inyeccionDependencias/src/after/).
+Los proyectos de Spring Security muestran tres estrategias de autenticación: HTTP Basic, tokens JWT emitidos por la API y OAuth2 con Keycloak. Los ejemplos de WebFlux comparan flujos reactivos y bloqueantes mediante `Mono`, `Flux` y Server-Sent Events. La sección de testing avanza desde los fundamentos de JUnit hasta el uso de Mockito.
 
-### Semana 2 — Liga MX API
+### Semana 4 — Desarrollo frontend
 
-API REST CRUD para administrar equipos y jugadores. Usa MySQL como base de datos, validaciones Jakarta y Hibernate para crear o actualizar el esquema automáticamente.
+La cuarta semana comienza con páginas estáticas en HTML, CSS y JavaScript, y continúa con aplicaciones creadas con React, TypeScript y Vite. Los ejercicios consumen APIs públicas, practican operaciones CRUD, implementan rutas protegidas con JWT y culminan en TaskFlow, una interfaz para administrar proyectos y tareas.
 
-La carpeta incluye una [guía detallada](./Semana2/ligamx/README.md) y una [colección de Postman](./Semana2/ligamx/LigaMX.postman_collection.json) con los endpoints disponibles.
-
-### Semana 2 — Liga MX Mongo API
-
-Versión documental de la API de Liga MX. Los equipos se almacenan en MongoDB e incorporan su lista de jugadores. También incluye operaciones masivas y validaciones de los datos recibidos.
-
-Consulta la [guía de uso y pruebas](./Semana2/ligaMxMongo/README.md) o importa la [colección de Postman](./Semana2/ligaMxMongo/LigaMX-Mongo.postman_collection.json).
-
-### Semana 2 — Liga MX API con seguridad
-
-Extiende la API basada en MySQL mediante Spring Security y autenticación HTTP Basic. Define permisos de lectura y escritura para los roles `VIEWER` y `ADMIN`.
-
-La configuración, las credenciales de demostración y el flujo de pruebas están documentados en el [README del proyecto](./Semana2/ligamxSecurity/README.md). También se proporciona una [colección de Postman](./Semana2/ligamxSecurity/LigaMX.postman_collection.json).
+Consulta el [README de la semana 4](<./Semana4(frontend)/README.md>) para conocer el contenido de cada día y las instrucciones de ejecución.
 
 ## Requisitos
 
-- Java 21.
-- No es necesario instalar Gradle: los proyectos ejecutables incluyen Gradle Wrapper.
-- MySQL para `ligamx` y `ligamxSecurity`.
+Los requisitos dependen del proyecto que se quiera ejecutar:
+
+- Java 21 para los proyectos backend y los ejercicios actuales de Java.
+- Node.js 20 o posterior y npm para los proyectos de React.
+- MySQL para las APIs relacionales.
 - MongoDB para `ligaMxMongo`.
-- Postman, opcional, para ejecutar las colecciones de pruebas.
+- Docker para el ejemplo de OAuth2 con Keycloak.
+- Postman o `curl`, opcionales, para probar las APIs.
 
-## Configuración y ejecución de las APIs
+Los proyectos de Java incluyen Gradle Wrapper o Maven Wrapper, por lo que no es necesario instalar estas herramientas globalmente.
 
-### Proyectos con MySQL
+## Ejecución rápida
 
-1. Crea una base de datos local:
+### Proyectos Gradle
 
-   ```sql
-   CREATE DATABASE ligamx;
-   ```
-
-2. En `Semana2/ligamx` o `Semana2/ligamxSecurity`, copia `src/main/resources/application.example.properties` como `application.properties`.
-3. Completa el usuario y la contraseña de MySQL en el nuevo archivo.
-4. Ejecuta la aplicación desde su carpeta:
-
-   ```powershell
-   .\gradlew.bat bootRun
-   ```
-
-### Proyecto con MongoDB
-
-1. Inicia MongoDB en `localhost:27017`.
-2. Entra en `Semana2/ligaMxMongo`.
-3. Ejecuta:
-
-   ```powershell
-   .\gradlew.bat bootRun
-   ```
-
-Las APIs utilizan `http://localhost:8080` de forma predeterminada. Ejecuta solo una a la vez, salvo que configures puertos diferentes.
-
-## Pruebas
-
-Desde la carpeta de cualquier proyecto Gradle:
+Desde la carpeta que contiene `gradlew.bat`:
 
 ```powershell
 .\gradlew.bat test
+.\gradlew.bat bootRun
 ```
 
-En Linux o macOS utiliza `./gradlew test`.
+Para el proyecto Pacman utiliza `./gradlew run` en Linux o macOS, o `gradlew.bat run` en Windows.
 
-Para probar manualmente las APIs, importa en Postman la colección JSON incluida en la carpeta correspondiente. Cada README específico describe el orden recomendado de las solicitudes y las variables necesarias.
+### Proyectos Maven
+
+Desde la carpeta que contiene `mvnw.cmd`:
+
+```powershell
+.\mvnw.cmd test
+.\mvnw.cmd spring-boot:run
+```
+
+### Proyectos React
+
+Desde la carpeta del ejercicio:
+
+```powershell
+npm install
+npm run dev
+```
+
+Los proyectos que consumen una API configurable incluyen un archivo `.env.example` con las variables necesarias.
 
 ## Estructura del repositorio
 
@@ -112,23 +96,32 @@ Para probar manualmente las APIs, importa en Postman la colección JSON incluida
 Academia-MTY-Xideral/
 ├── Semana1/
 │   └── Pacman/
-└── Semana2/
-    ├── inyeccionDependencias/
-    ├── ligamx/
-    ├── ligaMxMongo/
-    └── ligamxSecurity/
+├── Semana2/
+│   ├── inyeccionDependencias/
+│   ├── ligamx/
+│   └── ligaMxMongo/
+├── Semana3/
+│   ├── threads/
+│   ├── serializacion/
+│   ├── SpringSecurity/
+│   ├── Programacion Reactiva/
+│   └── testing/
+└── Semana4(frontend)/
+    ├── dia1/
+    ├── dia2/
+    ├── dia3/
+    ├── dia4/
+    └── dia5/
 ```
 
 ## Tecnologías utilizadas
 
-- Java 21
-- Gradle
-- Java Swing
-- Spring Boot 4
-- Spring Web MVC
-- Spring Data JPA
-- Spring Data MongoDB
-- Spring Security
-- MySQL
-- MongoDB
-- JUnit y Postman
+- Java 21, Swing, Gradle y Maven
+- Spring Boot, Spring Web MVC y Spring WebFlux
+- Spring Data JPA y Spring Data MongoDB
+- Spring Security, JWT, OAuth2 y Keycloak
+- MySQL y MongoDB
+- JUnit, Mockito y Postman
+- HTML, CSS y JavaScript
+- React 19, TypeScript y Vite
+- Material UI, React Router y Axios
