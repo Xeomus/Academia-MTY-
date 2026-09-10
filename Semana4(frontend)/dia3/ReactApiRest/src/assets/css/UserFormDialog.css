@@ -1,0 +1,58 @@
+.dialogPaper {
+    border-radius: 16px !important;
+    box-shadow: 0 20px 40px rgba(15, 23, 42, 0.16) !important;
+    padding: 4px;
+}
+
+.dialogTitle {
+    padding: 20px 24px 10px 24px !important;
+}
+
+.titleText {
+    font-weight: 700 !important;
+    color: #0f172a !important;
+    /* Texto oscuro y nítido */
+    font-size: 1.25rem !important;
+    letter-spacing: -0.01em;
+}
+
+.divider {
+    margin: 0 24px !important;
+    border-color: #f1f5f9 !important;
+}
+
+.dialogContent {
+    padding: 20px 24px !important;
+}
+
+.inputIcon {
+    color: #2563eb;
+    font-size: 20px !important;
+}
+
+.dialogActions {
+    padding: 8px 24px 20px 24px !important;
+    gap: 8px;
+}
+
+.cancelBtn {
+    color: #64748b !important;
+    font-weight: 600 !important;
+    border-radius: 8px !important;
+}
+
+.cancelBtn:hover {
+    background-color: #f1f5f9 !important;
+}
+
+.saveBtn {
+    padding-left: 24px !important;
+    padding-right: 24px !important;
+    font-weight: 600 !important;
+    border-radius: 8px !important;
+    box-shadow: none !important;
+}
+
+.saveBtn:hover {
+    box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3) !important;
+}

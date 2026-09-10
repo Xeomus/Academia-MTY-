@@ -1,0 +1,15 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
+    "jsx": "react-jsx",
+    "strict": true,
+    "types": ["node"],
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "outDir": "node_modules/.cache/ejercicios-react-tests",
+    "rootDir": "."
+  },
+  "include": ["tests/**/*.tsx", "src/Lista.tsx"]
+}
