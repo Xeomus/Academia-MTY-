@@ -1,6 +1,6 @@
 # Academia MTY — Xideral
 
-Repositorio de ejercicios y proyectos desarrollados durante la academia. El contenido está organizado por semanas y avanza desde fundamentos de Java y desarrollo backend con Spring Boot hasta pruebas, programación reactiva y aplicaciones frontend con React.
+Repositorio de ejercicios y proyectos desarrollados durante la academia. El contenido está organizado por semanas y avanza desde fundamentos de Java y desarrollo backend con Spring Boot hasta pruebas, programación reactiva, aplicaciones frontend con React y automatización web con Selenium.
 
 ## Contenido
 
@@ -16,6 +16,7 @@ Repositorio de ejercicios y proyectos desarrollados durante la academia. El cont
 | 3 | [Programación reactiva](<./Semana3/Programacion%20Reactiva/>) | Ejercicios con `Mono`, `Flux` y eventos enviados por el servidor. | Spring WebFlux, Reactor, Maven |
 | 3 | [Pruebas unitarias](./Semana3/testing/) | Proyectos progresivos de pruebas con aserciones, parametrización y dobles de prueba. | Java, JUnit, Mockito, Maven |
 | 4 | [Desarrollo frontend](<./Semana4(frontend)/>) | Ejercicios de HTML, CSS y JavaScript que evolucionan hacia aplicaciones React con APIs REST y autenticación. | React, TypeScript, Vite, Material UI |
+| 5 | [Automatización web](./Semana5/) | Pruebas de navegación e interacción mediante Page Object Model. | Java, Selenium WebDriver, TestNG, Maven |
 
 ## Proyectos por semana
 
@@ -44,6 +45,12 @@ La cuarta semana comienza con páginas estáticas en HTML, CSS y JavaScript, y c
 
 Consulta el [README de la semana 4](<./Semana4(frontend)/README.md>) para conocer el contenido de cada día y las instrucciones de ejecución.
 
+### Semana 5 — Automatización web
+
+La quinta semana aplica Selenium WebDriver y Page Object Model para localizar elementos, encapsular interacciones y automatizar recorridos sobre SauceDemo, OrangeHRM y Santander. Las pruebas usan TestNG para preparar el navegador, organizar escenarios y validar los resultados; el ejercicio de Santander también administra pestañas y genera capturas automáticas ante fallos.
+
+Consulta el [README de la semana 5](./Semana5/README.md) para revisar los métodos y archivos que participan en la localización, navegación, interacción y ejecución de las pruebas.
+
 ## Requisitos
 
 Los requisitos dependen del proyecto que se quiera ejecutar:
@@ -54,6 +61,7 @@ Los requisitos dependen del proyecto que se quiera ejecutar:
 - MongoDB para `ligaMxMongo`.
 - Docker para el ejemplo de OAuth2 con Keycloak.
 - Postman o `curl`, opcionales, para probar las APIs.
+- Google Chrome para ejecutar las pruebas de Selenium.
 
 Los proyectos de Java incluyen Gradle Wrapper o Maven Wrapper, por lo que no es necesario instalar estas herramientas globalmente.
 
@@ -90,6 +98,16 @@ npm run dev
 
 Los proyectos que consumen una API configurable incluyen un archivo `.env.example` con las variables necesarias.
 
+### Pruebas Selenium
+
+Desde cualquiera de los proyectos Maven de la semana 5:
+
+```powershell
+mvn clean test
+```
+
+Selenium Manager se encarga de resolver el ChromeDriver compatible con la versión instalada de Chrome.
+
 ## Estructura del repositorio
 
 ```text
@@ -106,12 +124,16 @@ Academia-MTY-Xideral/
 │   ├── SpringSecurity/
 │   ├── Programacion Reactiva/
 │   └── testing/
-└── Semana4(frontend)/
-    ├── dia1/
-    ├── dia2/
-    ├── dia3/
-    ├── dia4/
-    └── dia5/
+├── Semana4(frontend)/
+│   ├── dia1/
+│   ├── dia2/
+│   ├── dia3/
+│   ├── dia4/
+│   └── dia5/
+└── Semana5/
+    └── QA Selenium/
+        ├── dia1/
+        └── dia2/
 ```
 
 ## Tecnologías utilizadas
@@ -125,3 +147,4 @@ Academia-MTY-Xideral/
 - HTML, CSS y JavaScript
 - React 19, TypeScript y Vite
 - Material UI, React Router y Axios
+- Selenium WebDriver y TestNG
