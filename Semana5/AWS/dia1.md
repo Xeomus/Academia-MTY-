@@ -180,7 +180,7 @@ scp -i <RUTA_LLAVE>/taskflow-key.pem target/taskflow-api-*.jar ec2-user@<IP_PUBL
 
 No compiles dentro de una instancia `t3.micro`; su memoria es limitada.
 
-<a href="./img/dia1/TransferirJar.png"><img src="./img/dia1/TransferirJar.png" alt="Instalación de Amazon Corretto 21 en EC2" width="360"></a>
+<a href="./img/dia1/TransferirJar.png"><img src="./img/dia1/TransferirJar.png" alt="Transferir Jar" width="360"></a>
 
 ### Verificar integridad
 
@@ -235,8 +235,7 @@ curl -s localhost:8080/swagger-ui/index.html | head -3
 
 **Validación:** Swagger abre desde un equipo externo.
 
-<a href="./img/dia1/swagger.png"><img src="./img/dia1/swagger
-.png" alt="Instalación de Amazon Corretto 21 en EC2" width="360"></a>
+<a href="./img/dia1/swagger.png"><img src="./img/dia1/swagger.png" alt="Swagger runnign" width="360"></a>
 
 ## 8. Crear PostgreSQL en RDS
 
@@ -260,7 +259,7 @@ AWS Console → **RDS** → **Databases** → **Create database** → **Full con
 | Automated backups   | Deshabilitados para la práctica |
 | Deletion protection | Deshabilitada para la práctica  |
 
-<a href="./img/dia1/RDS.png"><img src="./img/dia1/RDS.png" alt="Instalación de Amazon Corretto 21 en EC2" width="360"></a>
+<a href="./img/dia1/RDS.png"><img src="./img/dia1/RDS.png" alt="RDS config" width="360"></a>
 
 Guarda la contraseña fuera del repositorio. Cuando RDS esté `Available`, copia el endpoint desde **Connectivity & security**. El puerto es `5432`.
 
@@ -284,7 +283,7 @@ El nombre debe estar en minúsculas, sin espacios ni guiones bajos, y ser único
 4. Selecciona **Actions** → **Share with a presigned URL**.
 5. Configura cinco minutos de vigencia y abre la URL generada.
 
-<a href="./img/dia1/bucket.png"><img src="./img/dia1/bucket.png" alt="Instalación de Amazon Corretto 21 en EC2" width="360"></a>
+<a href="./img/dia1/bucket.png"><img src="./img/dia1/bucket.png" alt="bucket creation" width="360"></a>
 
 **Validación:** la URL directa está bloqueada y la URL prefirmada descarga el JAR.
 
