@@ -1,32 +1,25 @@
-# React + TypeScript + Vite
+# TaskFlow Draft
 
-This template provides a minimal setup to get React working in Vite with HMR and some Oxlint rules.
+Primer ejercicio de conexión con TaskFlow del día 3. Esta aplicación React y TypeScript consulta el endpoint `/info` de un despliegue de TaskFlow y muestra los campos `version` y `app`.
 
-Currently, two official plugins are available:
+## Funcionamiento
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+`src/taskFlowService.tsx` realiza la solicitud al cargar la página. Muestra un mensaje de carga mientras espera la respuesta y un mensaje de error si la solicitud falla. La URL del servicio está escrita en ese archivo; para usar otro despliegue hay que cambiarla allí. El ejercicio requiere conexión a Internet y acceso al servicio indicado.
 
-## React Compiler
+## Ejecutar
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+Desde esta carpeta:
 
-## Expanding the Oxlint configuration
-
-If you are developing a production application, we recommend enabling type-aware lint rules by installing `oxlint-tsgolint` and editing `.oxlintrc.json`:
-
-```json
-{
-  "$schema": "./node_modules/oxlint/configuration_schema.json",
-  "plugins": ["react", "typescript", "oxc"],
-  "options": {
-    "typeAware": true
-  },
-  "rules": {
-    "react/rules-of-hooks": "error",
-    "react/only-export-components": ["warn", { "allowConstantExport": true }]
-  }
-}
+```powershell
+npm install
+npm run dev
 ```
 
-See the [Oxlint rules documentation](https://oxc.rs/docs/guide/usage/linter/rules) for the full list of rules and categories.
+Para comprobar el proyecto:
+
+```powershell
+npm run lint
+npm run build
+```
+
+Esta es una práctica inicial; la aplicación de administración de proyectos y tareas se encuentra en [TaskFlow](../../dia5/taskFlow/README.md).

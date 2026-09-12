@@ -1,32 +1,27 @@
-# React + TypeScript + Vite
+# React API REST — usuarios
 
-This template provides a minimal setup to get React working in Vite with HMR and some Oxlint rules.
+Ejercicio del día 3: interfaz CRUD de usuarios construida con React, TypeScript y Material UI. Usa la API de demostración JSONPlaceholder.
 
-Currently, two official plugins are available:
+## Funcionalidad
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+La pantalla principal lista usuarios y permite crear, editar y eliminar registros. `src/services/api.ts` centraliza las solicitudes HTTP; `src/services/userService.ts` define las operaciones y `src/hooks/useUsers.ts` administra los estados de carga, error y guardado.
 
-## React Compiler
+JSONPlaceholder simula las solicitudes de escritura: los cambios se reflejan en la sesión de la interfaz, pero no persisten en el servidor al recargar la página. Se necesita conexión a Internet.
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## Ejecutar
 
-## Expanding the Oxlint configuration
+Desde esta carpeta:
 
-If you are developing a production application, we recommend enabling type-aware lint rules by installing `oxlint-tsgolint` and editing `.oxlintrc.json`:
-
-```json
-{
-  "$schema": "./node_modules/oxlint/configuration_schema.json",
-  "plugins": ["react", "typescript", "oxc"],
-  "options": {
-    "typeAware": true
-  },
-  "rules": {
-    "react/rules-of-hooks": "error",
-    "react/only-export-components": ["warn", { "allowConstantExport": true }]
-  }
-}
+```powershell
+npm install
+npm run dev
 ```
 
-See the [Oxlint rules documentation](https://oxc.rs/docs/guide/usage/linter/rules) for the full list of rules and categories.
+Para comprobar el proyecto:
+
+```powershell
+npm run lint
+npm run build
+```
+
+La vista que se monta actualmente desde `src/App.tsx` es `src/pages/UsersPage.tsx`. También hay componentes y servicios de publicaciones en el código, pero no forman parte de la pantalla principal.
