@@ -1,6 +1,6 @@
 # Academia MTY — Xideral
 
-Repositorio de ejercicios y proyectos desarrollados durante la academia. El contenido está organizado por semanas y avanza desde fundamentos de Java y desarrollo backend con Spring Boot hasta pruebas, programación reactiva, aplicaciones frontend con React y automatización web con Selenium.
+Repositorio de ejercicios y proyectos desarrollados durante la academia. El contenido está organizado por semanas y avanza desde fundamentos de Java y desarrollo backend con Spring Boot hasta pruebas, programación reactiva, aplicaciones frontend con React, automatización web con Selenium y despliegues en AWS.
 
 ## Contenido
 
@@ -17,6 +17,7 @@ Repositorio de ejercicios y proyectos desarrollados durante la academia. El cont
 | 3 | [Pruebas unitarias](./Semana3/testing/) | Proyectos progresivos de pruebas con aserciones, parametrización y dobles de prueba. | Java, JUnit, Mockito, Maven |
 | 4 | [Desarrollo frontend](<./Semana4(frontend)/>) | Ejercicios de HTML, CSS y JavaScript que evolucionan hacia aplicaciones React con APIs REST y autenticación. | React, TypeScript, Vite, Material UI |
 | 5 | [Automatización web](./Semana5/) | Pruebas de navegación e interacción mediante Page Object Model. | Java, Selenium WebDriver, TestNG, Maven |
+| 5 | [AWS](./Semana5/AWS/README.md) | Despliegue de TaskFlow en EC2 con S3 y RDS; eventos en DynamoDB y automatización del despliegue. | AWS, EC2, S3, RDS, DynamoDB, CodePipeline |
 
 ## Proyectos por semana
 
@@ -45,11 +46,13 @@ La cuarta semana comienza con páginas estáticas en HTML, CSS y JavaScript, y c
 
 Consulta el [README de la semana 4](<./Semana4(frontend)/README.md>) para conocer el contenido de cada día y las instrucciones de ejecución.
 
-### Semana 5 — Automatización web
+### Semana 5 — Automatización web y AWS
 
 La quinta semana aplica Selenium WebDriver y Page Object Model para localizar elementos, encapsular interacciones y automatizar recorridos sobre SauceDemo, OrangeHRM y Santander. Las pruebas usan TestNG para preparar el navegador, organizar escenarios y validar los resultados; el ejercicio de Santander también administra pestañas y genera capturas automáticas ante fallos.
 
 Consulta el [README de la semana 5](./Semana5/README.md) para revisar los métodos y archivos que participan en la localización, navegación, interacción y ejecución de las pruebas.
+
+Las [guías de AWS](./Semana5/AWS/README.md) describen el despliegue manual de `taskflow-api` en EC2, con un JAR privado en S3 y PostgreSQL en RDS. También muestran cómo registrar eventos en DynamoDB y automatizar el despliegue con CodeBuild, CodeDeploy y CodePipeline.
 
 ## Requisitos
 
@@ -62,6 +65,7 @@ Los requisitos dependen del proyecto que se quiera ejecutar:
 - Docker para el ejemplo de OAuth2 con Keycloak.
 - Postman o `curl`, opcionales, para probar las APIs.
 - Google Chrome para ejecutar las pruebas de Selenium.
+- Una cuenta de AWS para seguir las guías de despliegue de la semana 5.
 
 Los proyectos de Java incluyen Gradle Wrapper o Maven Wrapper, por lo que no es necesario instalar estas herramientas globalmente.
 
@@ -131,6 +135,9 @@ Academia-MTY-Xideral/
 │   ├── dia4/
 │   └── dia5/
 └── Semana5/
+    ├── AWS/
+    │   ├── dia1.md
+    │   └── dia2.md
     └── QA Selenium/
         ├── dia1/
         └── dia2/
@@ -148,3 +155,4 @@ Academia-MTY-Xideral/
 - React 19, TypeScript y Vite
 - Material UI, React Router y Axios
 - Selenium WebDriver y TestNG
+- AWS: IAM, EC2, S3, RDS, DynamoDB, CodeBuild, CodeDeploy y CodePipeline

@@ -1,14 +1,19 @@
-# Automatización web con Selenium — Semana 5
+# Selenium y AWS — Semana 5
 
-La semana 5 reúne tres ejercicios de pruebas automatizadas con Selenium WebDriver, TestNG y Page Object Model. Esta guía se concentra en los archivos y métodos usados para localizar elementos, navegar, interactuar con las páginas y ejecutar las pruebas.
+La semana 5 reúne tres ejercicios de pruebas automatizadas con Selenium WebDriver, TestNG y Page Object Model, además de dos guías de despliegue de TaskFlow en AWS. Esta guía presenta los proyectos y los archivos y métodos usados para localizar elementos, navegar, interactuar con las páginas y ejecutar las pruebas.
 
 ## Proyectos
 
-| Día | Proyecto | Flujo automatizado | Guía |
+| Día | Proyecto | Contenido | Guía |
 | --- | --- | --- | --- |
 | 1 | SauceDemo | Inicio de sesión, agregar un producto, abrir el carrito y eliminarlo. | [README](./QA%20Selenium/dia1/selenium/README.md) |
 | 1 | OrangeHRM | Inicio de sesión, navegación al módulo PIM, búsqueda y selección de un resultado. | [README](./QA%20Selenium/dia1/selenium-Orange-HRM/README.md) |
 | 2 | Santander | Recorrido por enlaces de Personas, Empresas, Pymes, Banca Privada y Acerca del Banco. | [README](./QA%20Selenium/dia2/selenium-santander/README.md) |
+| 1–2 | AWS | Despliegue de `taskflow-api` en EC2 con S3 y RDS; DynamoDB y automatización con CodePipeline. | [README](./AWS/README.md) |
+
+## Despliegue en AWS
+
+La carpeta [AWS](./AWS/README.md) documenta dos prácticas. El [día 1](./AWS/dia1.md) cubre la configuración de la cuenta y el despliegue manual de la API con EC2, S3 y PostgreSQL en RDS. El [día 2](./AWS/dia2.md) trabaja con eventos en DynamoDB y prepara un pipeline con CodeBuild, CodeDeploy y CodePipeline para publicar cambios automáticamente.
 
 ## Cómo se localizan e interactúan los elementos
 
