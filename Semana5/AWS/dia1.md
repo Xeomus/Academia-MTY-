@@ -2,6 +2,8 @@
 
 Esta guía despliega `taskflow-api` en EC2, almacena el JAR en S3 y conecta la aplicación con PostgreSQL en RDS.
 
+Las capturas ilustran las pantallas de una ejecución; si algún valor visible difiere, sigue los parámetros de esta guía.
+
 ## Requisitos
 
 - Cuenta de AWS activa y proyecto `taskflow-api` disponible localmente.
@@ -13,20 +15,30 @@ Esta guía despliega `taskflow-api` en EC2, almacena el JAR en S3 y conecta la a
 
 AWS Console → **Billing and Cost Management** → **Budgets** → **Create budget**.
 
-| Campo | Valor |
-| --- | --- |
-| Setup | `Customize (advanced)` |
-| Type | `Cost budget` |
-| Name | `taskflow-5usd` |
-| Period | `Monthly`, recurrente |
-| Method | `Fixed` |
-| Amount | `5.00 USD` |
-| Alert 1 | `80 %`, gasto real, correo personal |
+<a href="./img/dia1/buget.png"><img src="./img/dia1/buget.png" alt="Selección de presupuesto personalizado de costos" width="360"></a>
+
+| Campo   | Valor                                    |
+| ------- | ---------------------------------------- |
+| Setup   | `Customize (advanced)`                   |
+| Type    | `Cost budget`                            |
+| Name    | `taskflow-5usd`                          |
+| Period  | `Monthly`, recurrente                    |
+| Method  | `Fixed`                                  |
+| Amount  | `5.00 USD`                               |
+| Alert 1 | `80 %`, gasto real, correo personal      |
 | Alert 2 | `100 %`, gasto previsto, correo personal |
+
+<a href="./img/dia1/setBuget.png"><img src="./img/dia1/setBuget.png" alt="Nombre, periodo y monto del presupuesto" width="360"></a>
+
+<a href="./img/dia1/alerts.png"><img src="./img/dia1/alerts.png" alt="Alertas del presupuesto sin acciones automáticas" width="360"></a>
+
+<a href="./img/dia1/resumeBudget.png"><img src="./img/dia1/resumeBudget.png" alt="Revisión del presupuesto y sus alertas antes de crearlo" width="360"></a>
 
 No agregues acciones automáticas ni elimines el presupuesto al terminar.
 
 **Validación:** el presupuesto muestra ambas alertas.
+
+<a href="./img/dia1/resume.png"><img src="./img/dia1/resume.png" alt="Presupuesto creado en la lista de AWS Budgets" width="360"></a>
 
 ## 2. Proteger la cuenta y crear un usuario IAM
 
@@ -43,12 +55,12 @@ AWS Console → nombre de la cuenta → **Security credentials** → **Multi-fac
 
 AWS Console → **IAM** → **Users** → **Create user**.
 
-| Campo | Valor |
-| --- | --- |
-| User name | `taskflow-admin` |
-| Console access | Habilitado |
-| Password | Contraseña personalizada |
-| Policy | `AdministratorAccess` |
+| Campo          | Valor                    |
+| -------------- | ------------------------ |
+| User name      | `taskflow-admin`         |
+| Console access | Habilitado               |
+| Password       | Contraseña personalizada |
+| Policy         | `AdministratorAccess`    |
 
 Guarda la URL de acceso, el usuario y la contraseña fuera del repositorio. Cierra la sesión root e inicia sesión como `taskflow-admin`.
 
@@ -60,26 +72,34 @@ Guarda la URL de acceso, el usuario y la contraseña fuera del repositorio. Cier
 
 AWS Console → **EC2** → **Instances** → **Launch instances**.
 
-| Campo | Valor |
-| --- | --- |
-| Name | `taskflow-ec2` |
-| AMI | Amazon Linux 2023, x86_64 |
-| Instance type | `t3.micro` |
-| Key pair | `taskflow-key`, RSA, `.pem` |
-| Public IP | Habilitada |
-| Security group | `taskflow-ec2-sg` |
-| Storage | `8 GiB gp3` |
+<a href="./img/dia1/createEC2.png"><img src="./img/dia1/createEC2.png" alt="Nombre e imagen Amazon Linux al crear una instancia EC2" width="360"></a>
+
+| Campo          | Valor                       |
+| -------------- | --------------------------- |
+| Name           | `taskflow-ec2`              |
+| AMI            | Amazon Linux 2023, x86_64   |
+| Instance type  | `t3.micro`                  |
+| Key pair       | `taskflow-key`, RSA, `.pem` |
+| Public IP      | Habilitada                  |
+| Security group | `taskflow-ec2-sg`           |
+| Storage        | `8 GiB gp3`                 |
+
+<a href="./img/dia1/RSA-PEM.png"><img src="./img/dia1/RSA-PEM.png" alt="Creación del par de claves RSA en formato PEM" width="360"></a>
+
+<a href="./img/dia1/keyPairEC2.png"><img src="./img/dia1/keyPairEC2.png" alt="Selección del par de claves de la instancia EC2" width="360"></a>
 
 Guarda `taskflow-key.pem` fuera del repositorio. AWS no permite descargar otra vez la clave privada.
 
 ### Reglas de entrada
 
-| Tipo | Puerto | Origen | Uso |
-| --- | --- | --- | --- |
-| SSH | `22` | `My IP` | Administración remota |
+| Tipo       | Puerto | Origen      | Uso                              |
+| ---------- | ------ | ----------- | -------------------------------- |
+| SSH        | `22`   | `My IP`     | Administración remota            |
 | Custom TCP | `8080` | `0.0.0.0/0` | Acceso público temporal a la API |
 
 No abras SSH a `0.0.0.0/0`.
+
+<a href="./img/dia1/netConfigEC2.png"><img src="./img/dia1/netConfigEC2.png" alt="IP pública y reglas de entrada de red para EC2" width="360"></a>
 
 **Validación:** la instancia está `Running`, usa `taskflow-ec2-sg` y tiene una IPv4 pública.
 
@@ -92,10 +112,10 @@ chmod 400 taskflow-key.pem
 ssh -i taskflow-key.pem ec2-user@<IP_PUBLICA>
 ```
 
-| Comando | Función |
-| --- | --- |
+| Comando     | Función                                       |
+| ----------- | --------------------------------------------- |
 | `chmod 400` | Limita la lectura de la clave al propietario. |
-| `ssh -i` | Abre una sesión en EC2 con la clave indicada. |
+| `ssh -i`    | Abre una sesión en EC2 con la clave indicada. |
 
 Si PowerShell rechaza los permisos de la llave:
 
@@ -114,13 +134,15 @@ curl ifconfig.me
 free -m
 ```
 
-| Comando | Función |
-| --- | --- |
-| `uname -a` | Muestra información del sistema. |
-| `curl ifconfig.me` | Consulta la IP pública. |
-| `free -m` | Muestra la memoria disponible en MB. |
+| Comando            | Función                              |
+| ------------------ | ------------------------------------ |
+| `uname -a`         | Muestra información del sistema.     |
+| `curl ifconfig.me` | Consulta la IP pública.              |
+| `free -m`          | Muestra la memoria disponible en MB. |
 
 **Validación:** SSH abre con el usuario `ec2-user`.
+
+<a href="./img/dia1/connectToEC2.png"><img src="./img/dia1/connectToEC2.png" alt="Conexión SSH a Amazon Linux con el usuario ec2-user" width="360"></a>
 
 ## 5. Instalar Java 21
 
@@ -129,12 +151,14 @@ sudo dnf install -y java-21-amazon-corretto-headless
 java -version
 ```
 
-| Comando | Función |
-| --- | --- |
-| `dnf install` | Instala Amazon Corretto 21. |
+| Comando         | Función                      |
+| --------------- | ---------------------------- |
+| `dnf install`   | Instala Amazon Corretto 21.  |
 | `java -version` | Comprueba la versión activa. |
 
 **Validación:** la salida indica Java 21.
+
+<a href="./img/dia1/javaInstalatioinEC2.png"><img src="./img/dia1/javaInstalatioinEC2.png" alt="Instalación de Amazon Corretto 21 en EC2" width="360"></a>
 
 ## 6. Compilar y transferir la aplicación
 
@@ -147,14 +171,16 @@ ls -lh target/*.jar
 scp -i <RUTA_LLAVE>/taskflow-key.pem target/taskflow-api-*.jar ec2-user@<IP_PUBLICA>:~/taskflow-api.jar
 ```
 
-| Comando | Función |
-| --- | --- |
-| `cd` | Entra al proyecto. |
+| Comando       | Función                                       |
+| ------------- | --------------------------------------------- |
+| `cd`          | Entra al proyecto.                            |
 | `mvn package` | Compila y genera el JAR sin ejecutar pruebas. |
-| `ls -lh` | Confirma el artefacto generado. |
-| `scp` | Copia el JAR a EC2. |
+| `ls -lh`      | Confirma el artefacto generado.               |
+| `scp`         | Copia el JAR a EC2.                           |
 
 No compiles dentro de una instancia `t3.micro`; su memoria es limitada.
+
+<a href="./img/dia1/TransferirJar.png"><img src="./img/dia1/TransferirJar.png" alt="Instalación de Amazon Corretto 21 en EC2" width="360"></a>
 
 ### Verificar integridad
 
@@ -187,10 +213,10 @@ nohup java -jar taskflow-api.jar > app.log 2>&1 &
 tail -f app.log
 ```
 
-| Comando | Función |
-| --- | --- |
+| Comando                 | Función                                                |
+| ----------------------- | ------------------------------------------------------ |
 | `nohup java -jar ... &` | Inicia la API en segundo plano y escribe en `app.log`. |
-| `tail -f` | Muestra el log en tiempo real. |
+| `tail -f`               | Muestra el log en tiempo real.                         |
 
 Abre `http://<IP_PUBLICA>:8080/swagger-ui/index.html`.
 
@@ -201,35 +227,40 @@ ps aux | grep java
 curl -s localhost:8080/swagger-ui/index.html | head -3
 ```
 
-| Resultado | Acción |
-| --- | --- |
-| No aparece Java | Revisar `app.log`. |
+| Resultado                                       | Acción                       |
+| ----------------------------------------------- | ---------------------------- |
+| No aparece Java                                 | Revisar `app.log`.           |
 | Responde en `localhost`, pero no desde internet | Revisar la regla TCP `8080`. |
-| La URL usa HTTPS | Cambiarla a HTTP. |
+| La URL usa HTTPS                                | Cambiarla a HTTP.            |
 
 **Validación:** Swagger abre desde un equipo externo.
+
+<a href="./img/dia1/swagger.png"><img src="./img/dia1/swagger
+.png" alt="Instalación de Amazon Corretto 21 en EC2" width="360"></a>
 
 ## 8. Crear PostgreSQL en RDS
 
 AWS Console → **RDS** → **Databases** → **Create database** → **Full configuration**.
 
-| Campo | Valor |
-| --- | --- |
-| Engine | PostgreSQL |
-| Template | Free tier o Dev/Test |
-| Deployment | Single-AZ |
-| Identifier | `taskflow-db` |
-| Master username | `taskflow` |
-| Credentials | Self managed |
-| Instance class | `db.t4g.micro` o `db.t3.micro` |
-| Storage | `20 GiB`, sin autoscaling |
-| VPC | Default |
-| Public access | `No` |
-| Security group | `taskflow-rds-sg` |
-| Authentication | Password |
-| Initial database | `taskflow` |
-| Automated backups | Deshabilitados para la práctica |
-| Deletion protection | Deshabilitada para la práctica |
+| Campo               | Valor                           |
+| ------------------- | ------------------------------- |
+| Engine              | PostgreSQL                      |
+| Template            | Free tier o Dev/Test            |
+| Deployment          | Single-AZ                       |
+| Identifier          | `taskflow-db`                   |
+| Master username     | `taskflow`                      |
+| Credentials         | Self managed                    |
+| Instance class      | `db.t4g.micro` o `db.t3.micro`  |
+| Storage             | `20 GiB`, sin autoscaling       |
+| VPC                 | Default                         |
+| Public access       | `No`                            |
+| Security group      | `taskflow-rds-sg`               |
+| Authentication      | Password                        |
+| Initial database    | `taskflow`                      |
+| Automated backups   | Deshabilitados para la práctica |
+| Deletion protection | Deshabilitada para la práctica  |
+
+<a href="./img/dia1/RDS.png"><img src="./img/dia1/RDS.png" alt="Instalación de Amazon Corretto 21 en EC2" width="360"></a>
 
 Guarda la contraseña fuera del repositorio. Cuando RDS esté `Available`, copia el endpoint desde **Connectivity & security**. El puerto es `5432`.
 
@@ -239,11 +270,11 @@ Guarda la contraseña fuera del repositorio. Cuando RDS esté `Available`, copia
 
 AWS Console → **S3** → **Create bucket**.
 
-| Campo | Valor |
-| --- | --- |
-| Bucket type | General purpose |
-| Name | `taskflow-artefactos-<USUARIO_GITHUB>` |
-| Block Public Access | Habilitado |
+| Campo               | Valor                                  |
+| ------------------- | -------------------------------------- |
+| Bucket type         | General purpose                        |
+| Name                | `taskflow-artefactos-<USUARIO_GITHUB>` |
+| Block Public Access | Habilitado                             |
 
 El nombre debe estar en minúsculas, sin espacios ni guiones bajos, y ser único globalmente.
 
@@ -252,6 +283,8 @@ El nombre debe estar en minúsculas, sin espacios ni guiones bajos, y ser único
 3. Abre la URL directa del objeto; debe responder `AccessDenied`.
 4. Selecciona **Actions** → **Share with a presigned URL**.
 5. Configura cinco minutos de vigencia y abre la URL generada.
+
+<a href="./img/dia1/bucket.png"><img src="./img/dia1/bucket.png" alt="Instalación de Amazon Corretto 21 en EC2" width="360"></a>
 
 **Validación:** la URL directa está bloqueada y la URL prefirmada descarga el JAR.
 
@@ -269,8 +302,8 @@ Genera un secreto aleatorio de 256 bits. Guárdalo fuera del repositorio y no us
 
 AWS Console → **EC2** → **Security Groups** → `taskflow-rds-sg` → **Inbound rules** → **Edit inbound rules**.
 
-| Tipo | Puerto | Origen |
-| --- | --- | --- |
+| Tipo       | Puerto | Origen                                    |
+| ---------- | ------ | ----------------------------------------- |
 | PostgreSQL | `5432` | Security group de EC2 (`taskflow-ec2-sg`) |
 
 El origen debe ser el ID del security group de EC2, no una IP pública ni el grupo de RDS.
@@ -282,10 +315,10 @@ ps aux | grep java
 kill <PID>
 ```
 
-| Comando | Función |
-| --- | --- |
-| `ps aux | grep java` | Localiza el proceso y su PID. |
-| `kill` | Libera el puerto `8080`. |
+| Comando | Función                  |
+| ------- | ------------------------ | ----------------------------- |
+| `ps aux | grep java`               | Localiza el proceso y su PID. |
+| `kill`  | Libera el puerto `8080`. |
 
 ### 10.4 Iniciar con PostgreSQL
 
@@ -301,13 +334,13 @@ nohup java -jar taskflow-api.jar \
   > app.log 2>&1 &
 ```
 
-| Parámetro | Función |
-| --- | --- |
-| `spring.profiles.active` | Activa la configuración externa. |
-| `DB_HOST` y `DB_PORT` | Definen el endpoint y puerto de RDS. |
-| `DB_NAME` y `DB_USER` | Seleccionan la base y el usuario. |
-| `DB_PASSWORD` | Proporciona la contraseña de RDS. |
-| `JWT_SECRET` | Firma y valida tokens JWT. |
+| Parámetro                | Función                              |
+| ------------------------ | ------------------------------------ |
+| `spring.profiles.active` | Activa la configuración externa.     |
+| `DB_HOST` y `DB_PORT`    | Definen el endpoint y puerto de RDS. |
+| `DB_NAME` y `DB_USER`    | Seleccionan la base y el usuario.    |
+| `DB_PASSWORD`            | Proporciona la contraseña de RDS.    |
+| `JWT_SECRET`             | Firma y valida tokens JWT.           |
 
 Revisa errores con:
 
@@ -327,3 +360,28 @@ grep -n "Caused by" app.log | head -3
 - PostgreSQL privado en RDS.
 - Acceso a RDS limitado al security group de EC2.
 - Secretos y llaves fuera del repositorio.
+
+## Diagrama de la arquitectura del despliegue
+
+```mermaid
+flowchart LR
+    equipo["Equipo local<br/>Compila el JAR con Maven"]
+    usuario["Usuario externo<br/>Swagger y API"]
+
+    subgraph aws["AWS"]
+        s3["S3: bucket privado<br/>Copia del JAR"]
+
+        subgraph vpc["VPC
+        "]
+            ec2["EC2: taskflow-ec2<br/>Java 21 y taskflow-api<br/>IP pública · taskflow-ec2-sg"]
+            rds["RDS: taskflow-db<br/>PostgreSQL · acceso no público<br/>taskflow-rds-sg"]
+        end
+    end
+
+    equipo -->|"SCP / SSH · puerto 22<br/>solo desde My IP"| ec2
+    equipo -->|"Carga del JAR"| s3
+    usuario -->|"HTTP · puerto 8080"| ec2
+    ec2 -->|"PostgreSQL · puerto 5432<br/>origen: taskflow-ec2-sg"| rds
+```
+
+S3 conserva una copia privada del artefacto; la API ejecuta el JAR transferido a EC2 y consulta la base de datos privada en RDS.
