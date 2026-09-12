@@ -1,32 +1,25 @@
-# React + TypeScript + Vite
+# Rick and Morty API — React
 
-This template provides a minimal setup to get React working in Vite with HMR and some Oxlint rules.
+Ejercicio del día 2: consulta la API pública de Rick and Morty y presenta los personajes en tarjetas con React, TypeScript y Material UI.
 
-Currently, two official plugins are available:
+## Qué muestra
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+Al abrir la página, `RickAndMortyService` solicita `https://rickandmortyapi.com/api/character`. Mientras llega la respuesta muestra un indicador de carga; después presenta la imagen, nombre, estado, especie, género e identificador de cada personaje recibido. La consulta requiere conexión a Internet.
 
-## React Compiler
+## Ejecutar
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+Desde esta carpeta:
 
-## Expanding the Oxlint configuration
-
-If you are developing a production application, we recommend enabling type-aware lint rules by installing `oxlint-tsgolint` and editing `.oxlintrc.json`:
-
-```json
-{
-  "$schema": "./node_modules/oxlint/configuration_schema.json",
-  "plugins": ["react", "typescript", "oxc"],
-  "options": {
-    "typeAware": true
-  },
-  "rules": {
-    "react/rules-of-hooks": "error",
-    "react/only-export-components": ["warn", { "allowConstantExport": true }]
-  }
-}
+```powershell
+npm install
+npm run dev
 ```
 
-See the [Oxlint rules documentation](https://oxc.rs/docs/guide/usage/linter/rules) for the full list of rules and categories.
+Vite indicará la dirección local en la terminal. Para revisar el proyecto:
+
+```powershell
+npm run lint
+npm run build
+```
+
+El punto de entrada es `src/App.tsx` y la consulta y visualización están en `src/RickAndMortyService.tsx`.

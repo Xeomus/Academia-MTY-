@@ -1,32 +1,31 @@
-# React + TypeScript + Vite
+# JWT Auth Demo
 
-This template provides a minimal setup to get React working in Vite with HMR and some Oxlint rules.
+Cliente React y TypeScript del día 4 para practicar inicio de sesión con JWT, rutas protegidas y consultas a una API de TaskFlow. Incluye vistas de proyectos y tareas.
 
-Currently, two official plugins are available:
+## Requisitos y configuración
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+Necesitas Node.js 20 o posterior, npm y una API compatible que exponga `/auth/login` y los recursos de proyectos y tareas. La dirección base se lee de `VITE_API_URL`. Copia el ejemplo si necesitas configurarla:
 
-## React Compiler
-
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
-
-## Expanding the Oxlint configuration
-
-If you are developing a production application, we recommend enabling type-aware lint rules by installing `oxlint-tsgolint` and editing `.oxlintrc.json`:
-
-```json
-{
-  "$schema": "./node_modules/oxlint/configuration_schema.json",
-  "plugins": ["react", "typescript", "oxc"],
-  "options": {
-    "typeAware": true
-  },
-  "rules": {
-    "react/rules-of-hooks": "error",
-    "react/only-export-components": ["warn", { "allowConstantExport": true }]
-  }
-}
+```powershell
+Copy-Item .env.example .env
 ```
 
-See the [Oxlint rules documentation](https://oxc.rs/docs/guide/usage/linter/rules) for the full list of rules and categories.
+Edita `.env` para apuntar a tu API. El archivo se mantiene fuera de Git. La sesión guarda el token en `localStorage`; `src/services/authService.ts` gestiona el inicio de sesión y `src/ProtectedRoute.tsx` restringe las páginas internas.
+
+## Ejecutar
+
+Desde esta carpeta:
+
+```powershell
+npm install
+npm run dev
+```
+
+Para comprobar el proyecto:
+
+```powershell
+npm run lint
+npm run build
+```
+
+Las rutas principales son `/login`, `/dashboard` y `/projects/:projectId/tasks`. La aplicación completa de la siguiente jornada está en [TaskFlow](../../dia5/taskFlow/README.md).

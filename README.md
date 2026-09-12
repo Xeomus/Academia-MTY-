@@ -7,7 +7,7 @@ Repositorio de ejercicios y proyectos desarrollados durante la academia. El cont
 | Semana | Tema o proyecto | Descripción | Tecnologías principales |
 | --- | --- | --- | --- |
 | 1 | [Pacman](./Semana1/Pacman/) | Juego de escritorio con distintas estrategias de movimiento para los fantasmas. | Java, Swing, Gradle |
-| 2 | [Inyección de dependencias](./Semana2/inyeccionDependencias/src/) | Comparación entre dependencias creadas internamente y dependencias recibidas desde el exterior. | Java |
+| 2 | [Inyección de dependencias](./Semana2/inyeccionDependencias/) | Comparación entre dependencias creadas internamente y dependencias recibidas desde el exterior. | Java |
 | 2 | [Liga MX API](./Semana2/ligamx/) | API REST para administrar equipos y jugadores con persistencia relacional. | Spring Boot, Spring Data JPA, MySQL |
 | 2 | [Liga MX Mongo API](./Semana2/ligaMxMongo/) | Variante documental de la API de Liga MX. | Spring Boot, Spring Data MongoDB, MongoDB |
 | 3 | [Threads](./Semana3/threads/) | Ejemplo de concurrencia mediante `Thread` y `Runnable`. | Java |
@@ -16,7 +16,7 @@ Repositorio de ejercicios y proyectos desarrollados durante la academia. El cont
 | 3 | [Programación reactiva](<./Semana3/Programacion%20Reactiva/>) | Ejercicios con `Mono`, `Flux` y eventos enviados por el servidor. | Spring WebFlux, Reactor, Maven |
 | 3 | [Pruebas unitarias](./Semana3/testing/) | Proyectos progresivos de pruebas con aserciones, parametrización y dobles de prueba. | Java, JUnit, Mockito, Maven |
 | 4 | [Desarrollo frontend](<./Semana4(frontend)/>) | Ejercicios de HTML, CSS y JavaScript que evolucionan hacia aplicaciones React con APIs REST y autenticación. | React, TypeScript, Vite, Material UI |
-| 5 | [Automatización web](./Semana5/) | Pruebas de navegación e interacción mediante Page Object Model. | Java, Selenium WebDriver, TestNG, Maven |
+| 5 | [AWS y QA con Selenium](./Semana5/) | Guías de despliegue de TaskFlow en AWS y pruebas automatizadas de sitios web. | AWS, Java, Selenium WebDriver, TestNG |
 
 ## Proyectos por semana
 
@@ -26,7 +26,7 @@ Repositorio de ejercicios y proyectos desarrollados durante la academia. El cont
 
 ### Semana 2 — Persistencia y APIs REST
 
-La segunda semana introduce la [inyección de dependencias](./Semana2/inyeccionDependencias/src/) y desarrolla dos versiones de una API de Liga MX:
+La segunda semana introduce la [inyección de dependencias](./Semana2/inyeccionDependencias/) y desarrolla dos versiones de una API de Liga MX:
 
 - [Liga MX API](./Semana2/ligamx/), con persistencia relacional mediante JPA y MySQL.
 - [Liga MX Mongo API](./Semana2/ligaMxMongo/), con documentos de MongoDB que incorporan la lista de jugadores.
@@ -45,11 +45,11 @@ La cuarta semana comienza con páginas estáticas en HTML, CSS y JavaScript, y c
 
 Consulta el [README de la semana 4](<./Semana4(frontend)/README.md>) para conocer el contenido de cada día y las instrucciones de ejecución.
 
-### Semana 5 — Automatización web
+### Semana 5 — AWS y QA con Selenium
 
-La quinta semana aplica Selenium WebDriver y Page Object Model para localizar elementos, encapsular interacciones y automatizar recorridos sobre SauceDemo, OrangeHRM y Santander. Las pruebas usan TestNG para preparar el navegador, organizar escenarios y validar los resultados; el ejercicio de Santander también administra pestañas y genera capturas automáticas ante fallos.
+La quinta semana documenta el despliegue de `taskflow-api` en AWS con EC2, S3 y RDS, y una práctica de DynamoDB y CI/CD. También aplica Selenium WebDriver y Page Object Model para automatizar recorridos sobre SauceDemo, OrangeHRM y Santander con TestNG.
 
-Consulta el [README de la semana 5](./Semana5/README.md) para revisar los métodos y archivos que participan en la localización, navegación, interacción y ejecución de las pruebas.
+Consulta el [README de la semana 5](./Semana5/README.md) para acceder a las guías de [AWS](./Semana5/AWS/README.md) y [QA Selenium](<./Semana5/QA%20Selenium/README.md>).
 
 ## Requisitos
 
@@ -63,7 +63,7 @@ Los requisitos dependen del proyecto que se quiera ejecutar:
 - Postman o `curl`, opcionales, para probar las APIs.
 - Google Chrome para ejecutar las pruebas de Selenium.
 
-Los proyectos de Java incluyen Gradle Wrapper o Maven Wrapper, por lo que no es necesario instalar estas herramientas globalmente.
+Muchos proyectos de Java incluyen Gradle Wrapper o Maven Wrapper. Los ejercicios de Selenium requieren Maven instalado.
 
 ## Ejecución rápida
 
@@ -131,6 +131,9 @@ Academia-MTY-Xideral/
 │   ├── dia4/
 │   └── dia5/
 └── Semana5/
+    ├── AWS/
+    │   ├── dia1.md
+    │   └── dia2.md
     └── QA Selenium/
         ├── dia1/
         └── dia2/
@@ -148,3 +151,4 @@ Academia-MTY-Xideral/
 - React 19, TypeScript y Vite
 - Material UI, React Router y Axios
 - Selenium WebDriver y TestNG
+- AWS: EC2, S3, RDS, DynamoDB, CodeBuild, CodeDeploy y CodePipeline
