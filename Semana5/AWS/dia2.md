@@ -51,9 +51,13 @@ La conexión debe estar en la misma región que CodePipeline.
 
 **Validación:** la conexión aparece como `Available`.
 
+<a href="./img/dia2/githubConection.png"><img src="./img/dia2/githubConection.png" alt="Conexión github-taskflow con GitHub en estado Available" width="600"></a>
+
 ## 3. Crear el rol de EC2
 
 AWS Console → **IAM** → **Roles** → **Create role**.
+
+<a href="./img/dia2/Rol.png"><img src="./img/dia2/Rol.png" alt="Lista de roles de IAM y botón Create role" width="600"></a>
 
 | Campo | Valor |
 | --- | --- |
@@ -61,6 +65,8 @@ AWS Console → **IAM** → **Roles** → **Create role**.
 | Use case | EC2 |
 | Policy | `AmazonS3ReadOnlyAccess` |
 | Role name | `taskflow-ec2-role` |
+
+<a href="./img/dia2/permisosRol.png"><img src="./img/dia2/permisosRol.png" alt="Selección de la política AmazonS3ReadOnlyAccess para el rol de EC2" width="600"></a>
 
 El rol permite descargar artefactos desde S3.
 
@@ -78,6 +84,8 @@ AWS Console → **EC2** → **Instances** → **Launch instances**.
 | SSH | Puerto `22`, origen `My IP` |
 | API | Puerto `8080`, origen `0.0.0.0/0` |
 | IAM instance profile | `taskflow-ec2-role` |
+
+<a href="./img/dia2/LaucnEC2S3.png"><img src="./img/dia2/LaucnEC2S3.png" alt="Confirmación de inicio de la instancia EC2" width="360"></a>
 
 CodeDeploy seleccionará la instancia mediante el tag `Name=taskflow-ec2`.
 
@@ -102,6 +110,10 @@ No copies el JAR manualmente; lo instalará el pipeline.
 ## 5. Configurar AWS CLI
 
 Si `aws --version` falla, instala AWS CLI v2. Crea una access key desde **IAM** → **Users** → usuario administrativo → **Security credentials** → **Access keys**.
+
+<a href="./img/dia2/credencialesAWSCLI.png"><img src="./img/dia2/credencialesAWSCLI.png" alt="Selección del caso de uso Command Line Interface al crear una access key" width="600"></a>
+
+<a href="./img/dia2/accesKey.png"><img src="./img/dia2/accesKey.png" alt="Pantalla para recuperar la access key y descargar el archivo CSV" width="600"></a>
 
 ```bash
 aws configure
@@ -149,6 +161,8 @@ aws dynamodb describe-table \
 | `describe-table` | Consulta el estado de la tabla. |
 
 **Validación:** el estado es `"ACTIVE"`.
+
+<a href="./img/dia2/dynamoDBTable.png"><img src="./img/dia2/dynamoDBTable.png" alt="Tabla taskflow-eventos activa con claves taskId y fechaHora" width="600"></a>
 
 ## 7. Insertar eventos
 
@@ -349,6 +363,8 @@ AWS Console → **IAM** → **Roles** → **Create role**.
 | Policy | `AWSCodeDeployRole` |
 | Role name | `taskflow-codedeploy-role` |
 
+<a href="./img/dia2/rolCodeDeploy.png"><img src="./img/dia2/rolCodeDeploy.png" alt="Confirmación de creación del rol de servicio taskflow-codedeploy-role" width="600"></a>
+
 ### 12.2 Aplicación y grupo
 
 AWS Console → **CodeDeploy** → **Applications** → **Create application**.
@@ -442,3 +458,43 @@ IAM → usuario administrativo → **Security credentials** → **Access keys**.
 - CodeBuild genera el JAR.
 - CodeDeploy instala y valida la API.
 - CodePipeline ejecuta el flujo con cada cambio publicado.
+
+## Diagrama de la arquitectura del despliegue
+
+```mermaid
+flowchart TB
+    subgraph origen["Código fuente"]
+        direction LR
+        equipo["Equipo local<br/>Código y archivos del pipeline"]
+        github["GitHub<br/>Rama main"]
+        equipo -->|"git push"| github
+    end
+
+    subgraph aws["AWS"]
+        direction TB
+        subgraph pipeline["CodePipeline · taskflow-pipeline · Source → Build → Deploy"]
+            direction LR
+            build["CodeBuild · taskflow-build<br/>buildspec.yml · Maven<br/>Compila el JAR y arma el ZIP"]
+            s3["S3 · bucket privado versionado<br/>ZIP: JAR, appspec.yml,<br/>taskflow.service y scripts"]
+            deploy["CodeDeploy · taskflow-dg<br/>Selecciona el tag<br/>Name=taskflow-ec2"]
+            build -->|"Publica ZIP"| s3 -->|"Artefacto"| deploy
+        end
+
+        subgraph vpc["VPC"]
+            subgraph ec2["EC2 · taskflow-ec2 · Java 21"]
+                direction LR
+                agent["Agente CodeDeploy<br/>Lee appspec.yml"]
+                stop["1 · ApplicationStop<br/>parar.sh"]
+                install["2 · AfterInstall<br/>permisos.sh"]
+                start["3 · ApplicationStart<br/>arrancar.sh · systemd"]
+                validate["4 · ValidateService<br/>verificar.sh · GET /info"]
+                agent --> stop --> install --> start --> validate
+            end
+        end
+    end
+
+    origen -->|"Conexión github-taskflow<br/>detecta cambios en main"| pipeline
+    pipeline -->|"CodeDeploy entrega el artefacto<br/>al agente de la instancia"| ec2
+```
+
+CodePipeline toma los cambios de GitHub, CodeBuild genera el ZIP y S3 lo conserva de forma privada. CodeDeploy selecciona la instancia por su tag; el agente sigue los hooks de `appspec.yml` y `systemd` mantiene la API en el puerto `8080`. El despliegue se valida en `http://<IP_PUBLICA>:8080/info`. La tabla DynamoDB se administra por AWS CLI y no forma parte de este flujo.
