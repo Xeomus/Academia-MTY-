@@ -17,6 +17,7 @@ Repositorio de ejercicios y proyectos desarrollados durante la academia. El cont
 | 3 | [Pruebas unitarias](./Semana3/testing/) | Proyectos progresivos de pruebas con aserciones, parametrización y dobles de prueba. | Java, JUnit, Mockito, Maven |
 | 4 | [Desarrollo frontend](<./Semana4(frontend)/>) | Ejercicios de HTML, CSS y JavaScript que evolucionan hacia aplicaciones React con APIs REST y autenticación. | React, TypeScript, Vite, Material UI |
 | 5 | [AWS y QA con Selenium](./Semana5/) | Guías de despliegue de TaskFlow en AWS y pruebas automatizadas de sitios web. | AWS, Java, Selenium WebDriver, TestNG |
+| 6 | [Desarrollo asistido con GitHub Copilot](./Semana6/) | Flujo de trabajo con agentes, especificaciones, MCP, skills, herramientas personalizadas y revisión humana. | GitHub Copilot, MCP, Java, Playwright, VS Code |
 
 ## Proyectos por semana
 
@@ -51,6 +52,12 @@ La quinta semana documenta el despliegue de `taskflow-api` en AWS con EC2, S3 y 
 
 Consulta el [README de la semana 5](./Semana5/README.md) para acceder a las guías de [AWS](./Semana5/AWS/README.md) y [QA Selenium](<./Semana5/QA%20Selenium/README.md>).
 
+### Semana 6 — Desarrollo asistido con GitHub Copilot
+
+La sexta semana aplica GitHub Copilot al ciclo completo de desarrollo de `taskflow-api`: exploración y documentación del repositorio, implementación desde especificaciones, revisión de código y trabajo mediante pull requests. También incorpora servidores MCP, automatización con Playwright, skills y agentes personalizados con permisos diferenciados.
+
+El cierre traslada el flujo de la CLI a Visual Studio Code y lo aplica a un proyecto final. Consulta el [README de la semana 6](./Semana6/README.md) para revisar los objetivos y actividades de cada día.
+
 ## Requisitos
 
 Los requisitos dependen del proyecto que se quiera ejecutar:
@@ -62,6 +69,7 @@ Los requisitos dependen del proyecto que se quiera ejecutar:
 - Docker para el ejemplo de OAuth2 con Keycloak.
 - Postman o `curl`, opcionales, para probar las APIs.
 - Google Chrome para ejecutar las pruebas de Selenium.
+- PowerShell 7, GitHub Copilot CLI y una cuenta con acceso a GitHub Copilot para la semana 6.
 
 Muchos proyectos de Java incluyen Gradle Wrapper o Maven Wrapper. Los ejercicios de Selenium requieren Maven instalado.
 
@@ -130,13 +138,19 @@ Academia-MTY-Xideral/
 │   ├── dia3/
 │   ├── dia4/
 │   └── dia5/
-└── Semana5/
-    ├── AWS/
-    │   ├── dia1.md
-    │   └── dia2.md
-    └── QA Selenium/
-        ├── dia1/
-        └── dia2/
+├── Semana5/
+│   ├── AWS/
+│   │   ├── dia1.md
+│   │   └── dia2.md
+│   └── QA Selenium/
+│       ├── dia1/
+│       └── dia2/
+└── Semana6/
+    ├── dia1/
+    ├── dia2/
+    ├── dia3/
+    ├── dia4/
+    └── dia5/
 ```
 
 ## Tecnologías utilizadas
@@ -152,3 +166,5 @@ Academia-MTY-Xideral/
 - Material UI, React Router y Axios
 - Selenium WebDriver y TestNG
 - AWS: EC2, S3, RDS, DynamoDB, CodeBuild, CodeDeploy y CodePipeline
+- GitHub Copilot CLI, GitHub Copilot para VS Code y Model Context Protocol (MCP)
+- Playwright, skills y agentes personalizados
